@@ -41,30 +41,59 @@ namespace DeskDex.Controllers
             return checkin;
         }
 
-        // POST: api/Checkin
-        public void Post([FromBody]string value)
-        {
-        }
-
         // PUT: api/Checkin/5
-        public IHttpActionResult Put(int id, [FromBody]string checkinMAC)
+        [AcceptVerbs("POST", "PUT")]
+        public IHttpActionResult Put([FromBody]string checkinMAC)
         {
             string CurrentUser = User.Identity.Name;
             DateTime submitTime = DateTime.Now;
             try
             {
-                PhysicalAddress physicalAddress = PhysicalAddress.Parse(checkinMAC);
+                string physicalAddress = (PhysicalAddress.Parse(checkinMAC)).ToString();
+                var checkin = new Checkin
+                {
+                    LastUpdate = submitTime,
+                    Username = CurrentUser
+                };
 
-                // write checkin to database
                 using (var db = new DeskContext())
                 {
-                    var checkin = new Checkin
-                    {
-                        LastUpdate = submitTime,
-                        Username = CurrentUser
-                    };
+                    //// Update checkin table
+                    // check existing entries with same userID
+                    var oldCheckin = db.Checkins.FirstOrDefault(c => c.Username == CurrentUser);
 
-                    db.Checkins.Add(checkin);
+                    // write checkin to database
+                    if (oldCheckin != null)
+                    {
+                        // update time
+                        oldCheckin.LastUpdate = submitTime;
+                    } else
+                    {
+                        // make new entry
+                        db.Checkins.Add(checkin);
+                    }
+
+                    //// Update station
+                    // update existing entries with same MAC
+                    var station = db.Stations.FirstOrDefault(s => s.PhysicalAddress == physicalAddress);
+                    if (station != null)
+                    {
+                        // if station exists, set its checkin to this
+                        station.LastCheckin = checkin;
+                    } else
+                    {
+                        // create a new blank slate station
+                        db.Stations.Add(new Station
+                        {
+                            PhysicalAddress = physicalAddress,
+                            Location = "Unknown",
+                            Equipment = new List<Equipment>(),
+                            Capacity = 1,
+                            LastCheckin = checkin
+                        });
+                    }
+
+                    // Commit changes
                     db.SaveChanges();
                 }
             }
