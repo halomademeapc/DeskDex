@@ -12,15 +12,33 @@ namespace DeskDex.Controllers
     public class CheckinController : ApiController
     {
         // GET: api/Checkin
-        public IEnumerable<string> Get()
+        public IEnumerable<Checkin> Get()
         {
-            return new string[] { "value1", "value2" };
+            List<Checkin> Checkins = new List<Checkin>();
+            using (var db = new DeskContext())
+            {
+                var query = from c in db.Checkins orderby c.Username select c;
+                foreach (var item in query)
+                {
+                    Checkins.Add((Checkin)item);
+                }
+            }
+            return Checkins;
         }
 
         // GET: api/Checkin/5
-        public string Get(int id)
+        public Checkin Get(int id)
         {
-            return "value";
+            Checkin checkin = new Checkin();
+            using (var db = new DeskContext())
+            {
+                var query = from c in db.Checkins where c.ID == id select c;
+                foreach (var item in query)
+                {
+                    checkin = (Checkin)item;
+                }
+            }
+            return checkin;
         }
 
         // POST: api/Checkin
@@ -38,6 +56,17 @@ namespace DeskDex.Controllers
                 PhysicalAddress physicalAddress = PhysicalAddress.Parse(checkinMAC);
 
                 // write checkin to database
+                using (var db = new DeskContext())
+                {
+                    var checkin = new Checkin
+                    {
+                        LastUpdate = submitTime,
+                        Username = CurrentUser
+                    };
+
+                    db.Checkins.Add(checkin);
+                    db.SaveChanges();
+                }
             }
             catch (Exception e)
             {

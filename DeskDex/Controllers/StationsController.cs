@@ -40,9 +40,9 @@ namespace DeskDex.Controllers
 
         public static List<Station> Stations = new List<Station>
         {
-            new Desk
+            new Station
             {
-                PhysicalAddress = System.Net.NetworkInformation.PhysicalAddress.Parse("28-16-AD-58-D8-33"),
+                PhysicalAddress = (System.Net.NetworkInformation.PhysicalAddress.Parse("28-16-AD-58-D8-33")).ToString(),
                     Location = "N-4-D621",
                     Equipment = new List<Equipment>
                     {
@@ -51,7 +51,8 @@ namespace DeskDex.Controllers
                         EquipmentTypes[3]
                     },
                     Type = WorkStyles[0],
-                    LastCheckin = Checkins[0]
+                    LastCheckin = Checkins[0],
+                    Capacity = 1
             }
         };
 
