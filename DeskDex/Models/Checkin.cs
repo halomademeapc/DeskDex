@@ -62,10 +62,6 @@ namespace DeskDex.Models
     {
         [Key, DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public int ID { get; set; }
-        public WorkStyle(string Name)
-        {
-            this.Name = Name;
-        }
         public string Name { get; set; }
     }
 
