@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Data;
 using System.Data.Entity;
+using System.Data.SqlClient;
 using System.Linq;
 using System.Net;
 using System.Web;
@@ -101,6 +102,8 @@ namespace DeskDex.Controllers
         {
             if (ModelState.IsValid)
             {
+                db.Database.ExecuteSqlCommand("DELETE FROM StationEquipments where Station_ID = @ID", new SqlParameter("@ID",stationViewModel.Station.ID) );
+
                 var station = stationViewModel.Station;
 
                 var oldEntry = db.Stations.Find(station.ID);
@@ -108,8 +111,8 @@ namespace DeskDex.Controllers
                 // update old row
                 db.Entry(oldEntry).CurrentValues.SetValues(station);
                 oldEntry.Equipment = db.Equipment.Where(o => stationViewModel.SelectedEquipment.Contains(o.ID)).ToList();
+                oldEntry.Type = db.WorkStyles.Find(stationViewModel.selectedWorkStyle);
 
-                //db.Entry(station).State = EntityState.Modified;
                 db.SaveChanges();
                 return RedirectToAction("Index");
             }

@@ -12,6 +12,8 @@ namespace DeskDex.Models
         public IEnumerable<SelectListItem> AllEquipment { get; set; }
         public IEnumerable<SelectListItem> AllWorkStyles { get; set; }
 
+        public int selectedWorkStyle { get; set; }
+
         private List<int> _selectedEquipment;
         public List<int> SelectedEquipment
         {
