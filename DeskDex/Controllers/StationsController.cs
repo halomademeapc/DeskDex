@@ -39,7 +39,27 @@ namespace DeskDex.Controllers
         // GET: Stations/Create
         public ActionResult Create()
         {
-            return View();
+            var stationViewModel = new StationViewModel
+            {
+                Station = new Station()
+
+            };
+
+            var allEquipmentList = db.Equipment.ToList();
+            stationViewModel.AllEquipment = allEquipmentList.Select(o => new SelectListItem
+            {
+                Text = o.Name,
+                Value = o.ID.ToString()
+            });
+
+            var allTypesList = db.WorkStyles.ToList();
+            stationViewModel.AllWorkStyles = allTypesList.Select(w => new SelectListItem
+            {
+                Text = w.Name,
+                Value = w.ID.ToString()
+            });
+
+            return View(stationViewModel);
         }
 
         // POST: Stations/Create
@@ -47,16 +67,21 @@ namespace DeskDex.Controllers
         // more details see https://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Create([Bind(Include = "ID,PhysicalAddress,Location,Capacity,x1,y1,x2,y2")] Station station)
+        public ActionResult Create(StationViewModel stationViewModel)
         {
             if (ModelState.IsValid)
             {
+                var station = stationViewModel.Station;
+               
+                // update model
+                station.Equipment = db.Equipment.Where(o => stationViewModel.SelectedEquipment.Contains(o.ID)).ToList();
+                station.Type = db.WorkStyles.Find(stationViewModel.selectedWorkStyle);
+
                 db.Stations.Add(station);
                 db.SaveChanges();
                 return RedirectToAction("Index");
             }
-
-            return View(station);
+            return View(stationViewModel);
         }
 
         // GET: Stations/Edit/5
