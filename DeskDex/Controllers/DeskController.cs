@@ -17,9 +17,39 @@ namespace DeskDex.Controllers
         private DeskContext db = new DeskContext();
 
         // GET: api/Desk
-        public IQueryable<Station> GetStations()
+        [Route("api/map/{floor}")]
+        public IEnumerable<DeskMapViewModel> GetStations(int? floor)
         {
-            return db.Stations;
+            /* Return an overview for use on the map based on floor
+             */
+            List<DeskMapViewModel> vm = new List<DeskMapViewModel>();
+            //var query;
+            List<Station> Stations;
+            
+            if(floor != null)
+            {
+                Stations = db.Stations.Where(s => s.Floor == floor).ToList();
+            } else
+            {
+                Stations = db.Stations.ToList();
+            }
+
+            foreach (var Station in Stations)
+            {
+                vm.Add(new DeskMapViewModel
+                {
+                    DeskID = Station.ID,
+                    x1 = Station.x1,
+                    x2 = Station.x2,
+                    y1 = Station.y1,
+                    y2 = Station.y2,
+                    WorkStyle = Station.Type?.Name,
+                    LastCheckin = Station.LastCheckin?.LastUpdate,
+                    Location = Station.Location
+                });
+            }
+
+            return vm;
         }
 
         // GET: api/Desk/5

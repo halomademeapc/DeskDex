@@ -56,6 +56,7 @@ namespace DeskDex.Models
         public float x2 { get; set; }
         [Display(Name = "Bottom Edge")]
         public float y2 { get; set; }
+        public int Floor { get; set; }
     }
 
     public class WorkStyle
