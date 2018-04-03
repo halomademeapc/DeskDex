@@ -32,18 +32,24 @@ namespace DeskDex.Models
         public string Location { get; set; }
 
         [Display(Name = "Available Equipment")]
-        public List<Equipment> Equipment { get; set; }
+        public virtual ICollection<Equipment> Equipment { get; set; }
 
-        public Checkin LastCheckin { get; set; }
+        public virtual Checkin LastCheckin { get; set; }
 
         public int Capacity { get; set; }
 
         [Display(Name = "Type")]
-        public WorkStyle Type { get; set; }
+        public virtual WorkStyle Type { get; set; }
 
+        [Display(Name = "Left Edge")]
         public float x1 { get; set; }
+
+        [Display(Name = "Top Edge")]
         public float y1 { get; set; }
+
+        [Display(Name = "Right Edge")]
         public float x2 { get; set; }
+        [Display(Name = "Bottom Edge")]
         public float y2 { get; set; }
     }
 
@@ -62,13 +68,9 @@ namespace DeskDex.Models
     {
         [Key, DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public int ID { get; set; }
-        public Equipment(string Name, string Description)
-        {
-            this.Name = Name;
-            this.Description = Description;
-        }
-
         public string Name { get; set; }
         public string Description { get; set; }
+        public virtual ICollection<Station> Stations { get; set; }
+
     }
 }

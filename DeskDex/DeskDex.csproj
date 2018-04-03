@@ -174,7 +174,6 @@
     <Compile Include="App_Start\WebApiConfig.cs" />
     <Compile Include="Controllers\CheckinController.cs" />
     <Compile Include="Controllers\HomeController.cs" />
-    <Compile Include="Controllers\StationsController.cs" />
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
@@ -264,11 +263,6 @@
     <Content Include="Scripts\popper.js.map" />
     <Content Include="Scripts\popper-utils.min.js.map" />
     <Content Include="Scripts\popper-utils.js.map" />
-    <Content Include="Views\Stations\Create.cshtml" />
-    <Content Include="Views\Stations\Delete.cshtml" />
-    <Content Include="Views\Stations\Details.cshtml" />
-    <Content Include="Views\Stations\Edit.cshtml" />
-    <Content Include="Views\Stations\Index.cshtml" />
   </ItemGroup>
   <ItemGroup />
   <ItemGroup>
