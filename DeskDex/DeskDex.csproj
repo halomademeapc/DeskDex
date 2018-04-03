@@ -176,6 +176,7 @@
     <Compile Include="Controllers\EquipmentsController.cs" />
     <Compile Include="Controllers\HomeController.cs" />
     <Compile Include="Controllers\StationsController.cs" />
+    <Compile Include="Controllers\WorkStylesController.cs" />
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
@@ -276,6 +277,11 @@
     <Content Include="Views\Equipments\Details.cshtml" />
     <Content Include="Views\Equipments\Edit.cshtml" />
     <Content Include="Views\Equipments\Index.cshtml" />
+    <Content Include="Views\WorkStyles\Create.cshtml" />
+    <Content Include="Views\WorkStyles\Delete.cshtml" />
+    <Content Include="Views\WorkStyles\Details.cshtml" />
+    <Content Include="Views\WorkStyles\Edit.cshtml" />
+    <Content Include="Views\WorkStyles\Index.cshtml" />
   </ItemGroup>
   <ItemGroup />
   <ItemGroup>
