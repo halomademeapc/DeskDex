@@ -31,4 +31,26 @@ namespace DeskDex.Models
             }
         }
     }
+
+    public class DeskMapViewModel
+    {
+        public int DeskID { get; set; }
+        public float x1 { get; set; }
+        public float x2 { get; set; }
+        public float y1 { get; set; }
+        public float y2 { get; set; }
+        public string WorkStyle { get; set; }
+        public bool Occupied { get; set; }
+    }
+
+    public class DeskDetailViewModel
+    {
+        public int DeskID { get; set; }
+        public string WorkStyle { get; set; }
+        public DateTime LastUpdate { get; set; }
+        public string UserName { get; set; }
+        public int Capacity { get; set; }
+        public List<String> Equipment { get; set; }
+        public string Location { get; set; }
+    }
 }
