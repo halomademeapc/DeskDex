@@ -41,9 +41,7 @@ namespace DeskDex.Controllers
             return checkin;
         }
 
-        // PUT: api/Checkin/5
-        [AcceptVerbs("POST", "PUT")]
-        public IHttpActionResult Put([FromBody]string checkinMAC)
+        public IHttpActionResult Post([FromBody]string checkinMAC)
         {
             string CurrentUser = User.Identity.Name;
             DateTime submitTime = DateTime.Now;
@@ -67,7 +65,18 @@ namespace DeskDex.Controllers
                     {
                         // update time
                         oldCheckin.LastUpdate = submitTime;
-                    } else
+
+                        // clear out old station reg
+                        var prevReg = from s in db.Stations where s.LastCheckin.ID == oldCheckin.ID select s;
+                        foreach (var item in prevReg)
+                        {
+                            item.LastCheckin = null;
+                        }
+
+                        // switch current checkin
+                        checkin = oldCheckin;
+                    }
+                    else
                     {
                         // make new entry
                         db.Checkins.Add(checkin);
@@ -80,7 +89,8 @@ namespace DeskDex.Controllers
                     {
                         // if station exists, set its checkin to this
                         station.LastCheckin = checkin;
-                    } else
+                    }
+                    else
                     {
                         // create a new blank slate station
                         db.Stations.Add(new Station

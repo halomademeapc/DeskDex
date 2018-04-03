@@ -1,0 +1,8 @@
+POST /api/Checkin HTTP/1.1
+Host: localhost:50580
+Content-Type: application/json
+Cache-Control: no-cache
+Postman-Token: 4a2f7677-8455-5e53-75d9-c0b8b1fe4537
+
+
+"28-16-AD-58-D8-34"
