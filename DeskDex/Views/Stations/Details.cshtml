@@ -1,0 +1,75 @@
+﻿@model DeskDex.Models.Station
+
+@{
+    ViewBag.Title = "Details";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<h2>Details</h2>
+
+<div>
+    <h4>Station</h4>
+    <hr />
+    <dl class="dl-horizontal">
+        <dt>
+            @Html.DisplayNameFor(model => model.PhysicalAddress)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.PhysicalAddress)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.Location)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.Location)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.Capacity)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.Capacity)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.x1)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.x1)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.y1)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.y1)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.x2)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.x2)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.y2)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.y2)
+        </dd>
+
+    </dl>
+</div>
+<p>
+    @Html.ActionLink("Edit", "Edit", new { id = Model.ID }) |
+    @Html.ActionLink("Back to List", "Index")
+</p>

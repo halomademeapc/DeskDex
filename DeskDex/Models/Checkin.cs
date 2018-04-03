@@ -22,6 +22,11 @@ namespace DeskDex.Models
     }
     public class Station
     {
+        public Station()
+        {
+            this.Equipment = new HashSet<Equipment>();
+        }
+
         [Key, DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public int ID { get; set; }
 
@@ -66,6 +71,11 @@ namespace DeskDex.Models
 
     public class Equipment
     {
+        public Equipment()
+        {
+            this.Stations = new HashSet<Station>();
+        }
+
         [Key, DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public int ID { get; set; }
         public string Name { get; set; }
