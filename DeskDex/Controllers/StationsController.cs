@@ -82,6 +82,13 @@ namespace DeskDex.Controllers
                 Value = o.ID.ToString()
             });
 
+            var allTypesList = db.WorkStyles.ToList();
+            stationViewModel.AllWorkStyles = allTypesList.Select(w => new SelectListItem
+            {
+                Text = w.Name,
+                Value = w.ID.ToString()
+            });
+
             return View(stationViewModel);
         }
 
@@ -90,15 +97,17 @@ namespace DeskDex.Controllers
         // more details see https://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Edit([Bind(Include = "ID,PhysicalAddress,Location,Capacity,x1,y1,x2,y2")] Station station)
+        public ActionResult Edit(StationViewModel stationViewModel)
         {
             if (ModelState.IsValid)
             {
+                var station = stationViewModel.Station;
+                station.Equipment = db.Equipment.Where(o => stationViewModel.SelectedEquipment.Contains(o.ID)).ToList();
                 db.Entry(station).State = EntityState.Modified;
                 db.SaveChanges();
                 return RedirectToAction("Index");
             }
-            return View(station);
+            return View(stationViewModel);
         }
 
         // GET: Stations/Delete/5

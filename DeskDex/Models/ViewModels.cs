@@ -10,19 +10,23 @@ namespace DeskDex.Models
     {
         public Station Station { get; set; }
         public IEnumerable<SelectListItem> AllEquipment { get; set; }
+        public IEnumerable<SelectListItem> AllWorkStyles { get; set; }
 
         private List<int> _selectedEquipment;
         public List<int> SelectedEquipment
         {
             get
             {
-                if(_selectedEquipment == null)
+                if (_selectedEquipment == null)
                 {
                     _selectedEquipment = Station.Equipment.Select(e => e.ID).ToList();
                 }
                 return _selectedEquipment;
             }
-            set { _selectedEquipment = value; }
+            set
+            {
+                _selectedEquipment = value;
+            }
         }
     }
 }

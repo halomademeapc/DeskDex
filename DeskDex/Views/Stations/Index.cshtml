@@ -33,42 +33,51 @@
         <th>
             @Html.DisplayNameFor(model => model.y2)
         </th>
-        <th>@Html.DisplayNameFor(model => model.Equipment)</th>
+        <th>
+            @Html.DisplayNameFor(model => model.Type)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.Equipment)
+        </th>
         <th></th>
     </tr>
 
-@foreach (var item in Model) {
-    <tr>
-        <td>
-            @Html.DisplayFor(modelItem => item.PhysicalAddress)
-        </td>
-        <td>
-            @Html.DisplayFor(modelItem => item.Location)
-        </td>
-        <td>
-            @Html.DisplayFor(modelItem => item.Capacity)
-        </td>
-        <td>
-            @Html.DisplayFor(modelItem => item.x1)
-        </td>
-        <td>
-            @Html.DisplayFor(modelItem => item.y1)
-        </td>
-        <td>
-            @Html.DisplayFor(modelItem => item.x2)
-        </td>
-        <td>
-            @Html.DisplayFor(modelItem => item.y2)
-        </td>
-        <td>
-            @Html.ListBox("ID", new SelectList(item.Equipment,"ID","Name"))
-        </td>
-        <td>
-            @Html.ActionLink("Edit", "Edit", new { id=item.ID }) |
-            @Html.ActionLink("Details", "Details", new { id=item.ID }) |
-            @Html.ActionLink("Delete", "Delete", new { id=item.ID })
-        </td>
-    </tr>
-}
+    @foreach (var item in Model)
+    {
+        <tr>
+            <td>
+                @Html.DisplayFor(modelItem => item.PhysicalAddress)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Location)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Capacity)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.x1)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.y1)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.x2)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.y2)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Type)
+            </td>
+            <td>
+                @Html.ListBox("ID", new SelectList(item.Equipment, "ID", "Name"))
+            </td>
+            <td>
+                @Html.ActionLink("Edit", "Edit", new { id = item.ID }) |
+                @Html.ActionLink("Details", "Details", new { id = item.ID }) |
+                @Html.ActionLink("Delete", "Delete", new { id = item.ID })
+            </td>
+        </tr>
+    }
 
 </table>
