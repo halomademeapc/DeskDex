@@ -102,8 +102,14 @@ namespace DeskDex.Controllers
             if (ModelState.IsValid)
             {
                 var station = stationViewModel.Station;
-                station.Equipment = db.Equipment.Where(o => stationViewModel.SelectedEquipment.Contains(o.ID)).ToList();
-                db.Entry(station).State = EntityState.Modified;
+
+                var oldEntry = db.Stations.Find(station.ID);
+
+                // update old row
+                db.Entry(oldEntry).CurrentValues.SetValues(station);
+                oldEntry.Equipment = db.Equipment.Where(o => stationViewModel.SelectedEquipment.Contains(o.ID)).ToList();
+
+                //db.Entry(station).State = EntityState.Modified;
                 db.SaveChanges();
                 return RedirectToAction("Index");
             }
