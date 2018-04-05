@@ -12,6 +12,7 @@ using DeskDex.Models;
 
 namespace DeskDex.Controllers
 {
+    [AllowAnonymous]
     public class DeskController : ApiController
     {
         private DeskContext db = new DeskContext();

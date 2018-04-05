@@ -54,4 +54,10 @@ namespace DeskDex.Models
         public List<String> Equipment { get; set; }
         public string Location { get; set; }
     }
+
+    public class CheckinViewModel
+    {
+        public string address { get; set; }
+        public string acid { get; set; }
+    }
 }

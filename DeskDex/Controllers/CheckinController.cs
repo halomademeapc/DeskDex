@@ -1,4 +1,5 @@
 ﻿using DeskDex.Models;
+using Newtonsoft.Json.Linq;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -41,24 +42,23 @@ namespace DeskDex.Controllers
             return checkin;
         }
 
-        public IHttpActionResult Post([FromBody]string checkinMAC)
+        public IHttpActionResult Post([FromBody]CheckinViewModel input)
         {
-            string CurrentUser = User.Identity.Name;
             DateTime submitTime = DateTime.Now;
+
             try
             {
-                string physicalAddress = (PhysicalAddress.Parse(checkinMAC)).ToString();
                 var checkin = new Checkin
                 {
                     LastUpdate = submitTime,
-                    Username = CurrentUser
+                    Username = input.acid
                 };
 
                 using (var db = new DeskContext())
                 {
                     //// Update checkin table
                     // check existing entries with same userID
-                    var oldCheckin = db.Checkins.FirstOrDefault(c => c.Username == CurrentUser);
+                    var oldCheckin = db.Checkins.FirstOrDefault(c => c.Username == input.acid);
 
                     // write checkin to database
                     if (oldCheckin != null)
@@ -84,7 +84,7 @@ namespace DeskDex.Controllers
 
                     //// Update station
                     // update existing entries with same MAC
-                    var station = db.Stations.FirstOrDefault(s => s.PhysicalAddress == physicalAddress);
+                    var station = db.Stations.FirstOrDefault(s => s.PhysicalAddress == input.address);
                     if (station != null)
                     {
                         // if station exists, set its checkin to this
@@ -95,7 +95,7 @@ namespace DeskDex.Controllers
                         // create a new blank slate station
                         db.Stations.Add(new Station
                         {
-                            PhysicalAddress = physicalAddress,
+                            PhysicalAddress = input.address,
                             Location = "Unknown",
                             Equipment = new List<Equipment>(),
                             Capacity = 1,
