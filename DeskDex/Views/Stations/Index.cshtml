@@ -5,12 +5,18 @@
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
 <div class="container mt-4">
-    <h2 class="float-md-left">Stations</h2>
+    <h2 class="float-sm-left">Stations</h2>
 
-    <div class="float-md-right btn-group" role="group">
+    <div class="float-sm-right btn-group" role="group">
         <a href="@Url.Action("Create")" class="btn btn-primary"><i class="fas fa-plus mr-1"></i> Create New</a>
     </div>
     <div class="clearfix"></div>
+
+    <nav class="breadcrumb my-3">
+        @Html.ActionLink("DeskDex", "Index", "Home", null, new { @class = "breadcrumb-item" })
+        <span class="breadcrumb-item">Management</span>
+        <span class="breadcrumb-item active">Stations</span>
+    </nav>
 
     <ul class="list-group-flush mt-3 pl-0">
         <li class="list-group-item grey lighten-4 d-none d-md-block">
@@ -34,10 +40,10 @@
         </li>
         @foreach (var item in Model)
         {
-            <li class="list-group-item">
+            <li class="list-group-item list-group-item-action">
                 <div class="row">
                     <div class="col-sm-3">
-                        @Html.DisplayFor(modelItem => item.Location)
+                        <a href="@Url.Action("Details", new { id = item.ID })">@Html.DisplayFor(modelItem => item.Location)</a>
                     </div>
                     <div class="col-sm-3">
                         @Html.DisplayFor(modelItem => item.PhysicalAddress)

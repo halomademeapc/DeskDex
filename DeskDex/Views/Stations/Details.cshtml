@@ -5,94 +5,100 @@
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
 
-<h2>Details</h2>
+<div class="container mt-4">
+    <h2 class="float-sm-left">@Html.DisplayFor(model => model.Location) Details</h2>
 
-<div>
-    <h4>Station</h4>
-    <hr />
-    <dl class="dl-horizontal">
-        <dt>
-            @Html.DisplayNameFor(model => model.PhysicalAddress)
-        </dt>
+    <div class="float-sm-right btn-group" role="group">
+        <a href="@Url.Action("Edit", new { id = Model.ID })" class="btn btn-primary"><i class="fas fa-edit"></i> Edit</a>
+    </div>
+    <div class="clearfix"></div>
 
-        <dd>
-            @Html.DisplayFor(model => model.PhysicalAddress)
-        </dd>
+    <nav class="breadcrumb my-3">
+        @Html.ActionLink("DeskDex", "Index", "Home", null, new { @class = "breadcrumb-item" })
+        <span class="breadcrumb-item">Management</span>
+        @Html.ActionLink("Stations", "Index", "Stations", null, new { @class = "breadcrumb-item" })
+        <span class="breadcrumb-item active">@Html.DisplayFor(model => model.Location)</span>
+    </nav>
 
-        <dt>
-            @Html.DisplayNameFor(model => model.Location)
-        </dt>
+    <div>
+        <div class="row">
+            <dl class="dl-horizontal col-md-6">
+                <dt>
+                    @Html.DisplayNameFor(model => model.PhysicalAddress)
+                </dt>
 
-        <dd>
-            @Html.DisplayFor(model => model.Location)
-        </dd>
+                <dd>
+                    @Html.DisplayFor(model => model.PhysicalAddress)
+                </dd>
 
-        <dt>
-            @Html.DisplayNameFor(model => model.Capacity)
-        </dt>
+                <dt>
+                    @Html.DisplayNameFor(model => model.Location)
+                </dt>
 
-        <dd>
-            @Html.DisplayFor(model => model.Capacity)
-        </dd>
+                <dd>
+                    @Html.DisplayFor(model => model.Location)
+                </dd>
 
-        <dt>
-            @Html.DisplayNameFor(model => model.x1)
-        </dt>
+                <dt>
+                    @Html.DisplayNameFor(model => model.Capacity)
+                </dt>
 
-        <dd>
-            @Html.DisplayFor(model => model.x1)
-        </dd>
+                <dd>
+                    @Html.DisplayFor(model => model.Capacity)
+                </dd>
 
-        <dt>
-            @Html.DisplayNameFor(model => model.y1)
-        </dt>
+                <dt>
+                    Position
+                </dt>
 
-        <dd>
-            @Html.DisplayFor(model => model.y1)
-        </dd>
+                <dd>
+                    <table class="text-center">
+                        <tr>
+                            <td></td>
+                            <td>@Html.DisplayFor(model => model.y1)</td>
+                            <td></td>
+                        </tr>
+                        <tr>
+                            <td>@Html.DisplayFor(model => model.x1)</td>
+                            <td><i class="far fa-square mx-2"></i></td>
+                            <td>@Html.DisplayFor(model => model.x2)</td>
+                        </tr>
+                        <tr>
+                            <td></td>
+                            <td>@Html.DisplayFor(model => model.y2)</td>
+                            <td></td>
+                        </tr>
+                    </table>
 
-        <dt>
-            @Html.DisplayNameFor(model => model.x2)
-        </dt>
+                </dd>
 
-        <dd>
-            @Html.DisplayFor(model => model.x2)
-        </dd>
+                <dt>
+                    @Html.DisplayNameFor(model => model.Type)
+                </dt>
+                <dd>
+                    @Html.DisplayFor(model => model.Type.Name)
+                </dd>
+                <dt>
+                    @Html.DisplayNameFor(mode => Model.Equipment)
+                </dt>
+                <dd>
+                    @foreach (var equip in Model.Equipment)
+                    {
+                        <div>@equip.Name</div>
+                    }
+                </dd>
 
-        <dt>
-            @Html.DisplayNameFor(model => model.y2)
-        </dt>
+            </dl>
+            <div class="col-md-6">
+                @if (!String.IsNullOrEmpty(Model.FilePath))
+                {
+                    <img class="img-fluid" src="@Model.FilePath" />
+                }
+            </div>
+        </div>
 
-        <dd>
-            @Html.DisplayFor(model => model.y2)
-        </dd>
-        <dt>
-            @Html.DisplayNameFor(model => model.Type)
-        </dt>
-        <dd>
-            @Html.DisplayFor(model => model.Type.Name)
-        </dd>
-        <dt>
-            @Html.DisplayNameFor(mode => Model.Equipment)
-        </dt>
-        <dd>
-            @Html.ListBox("ID", new SelectList(Model.Equipment, "ID", "Name"))
-        </dd>
-
-        @if (!String.IsNullOrEmpty(Model.FilePath))
-        {
-            <dt>
-                @Html.DisplayNameFor(model => model.FilePath)
-            </dt>
-
-            <dd>
-                <img src="@Model.FilePath" />
-            </dd>
-        }
-
-    </dl>
+    </div>
+    <p>
+        @Html.ActionLink("Back to List", "Index")
+    </p>
 </div>
-<p>
-    @Html.ActionLink("Edit", "Edit", new { id = Model.ID }) |
-    @Html.ActionLink("Back to List", "Index")
-</p>
