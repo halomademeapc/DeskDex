@@ -19,7 +19,7 @@
     </nav>
 
     <ul class="list-group-flush mt-3 pl-0">
-        <li class="list-group-item grey lighten-4 d-none d-md-block">
+        <li class="list-group-item grey lighten-4 d-none d-sm-block">
             <div class="row lead">
                 <div class="col-sm-3 lead">
                     @Html.DisplayNameFor(model => model.Location)
@@ -52,7 +52,7 @@
                         @Html.DisplayFor(modelItem => item.Type.Name)
                     </div>
                     <div class="col-sm-1">
-                        @Html.DisplayFor(modelItem => item.Floor)
+                        <span class="d-sm-none">Floor </span>@Html.DisplayFor(modelItem => item.Floor)
                     </div>
                     <div class="col-sm-3 text-right" role="group">
                         <a href="@Url.Action("Details", new { id = item.ID })" class="mx-2 btn-flat"><i class="fas fa-info"></i></a>
