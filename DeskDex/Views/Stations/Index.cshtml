@@ -52,7 +52,10 @@
                 @Html.DisplayFor(modelItem => item.Type.Name)
             </td>
             <td>
-                @Html.ListBox("ID", new SelectList(item.Equipment, "ID", "Name"))
+                @foreach (var equip in item.Equipment)
+                {
+                    <div>@equip.Name</div>
+                }
             </td>
             <td>
                 @Html.ActionLink("Edit", "Edit", new { id = item.ID }) |

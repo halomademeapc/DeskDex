@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Web;
 using System.Web.Mvc;
@@ -13,6 +14,9 @@ namespace DeskDex.Models
         public IEnumerable<SelectListItem> AllWorkStyles { get; set; }
 
         public int selectedWorkStyle { get; set; }
+
+        [Display(Name = "Image")]
+        public HttpPostedFileBase File { get; set; }
 
         private List<int> _selectedEquipment;
         public List<int> SelectedEquipment

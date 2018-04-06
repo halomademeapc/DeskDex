@@ -66,6 +66,29 @@
         <dd>
             @Html.DisplayFor(model => model.y2)
         </dd>
+        <dt>
+            @Html.DisplayNameFor(model => model.Type)
+        </dt>
+        <dd>
+            @Html.DisplayFor(model => model.Type.Name)
+        </dd>
+        <dt>
+            @Html.DisplayNameFor(mode => Model.Equipment)
+        </dt>
+        <dd>
+            @Html.ListBox("ID", new SelectList(Model.Equipment, "ID", "Name"))
+        </dd>
+
+        @if (!String.IsNullOrEmpty(Model.FilePath))
+        {
+            <dt>
+                @Html.DisplayNameFor(model => model.FilePath)
+            </dt>
+
+            <dd>
+                <img src="@Model.FilePath" />
+            </dd>
+        }
 
     </dl>
 </div>

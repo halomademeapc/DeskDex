@@ -3,6 +3,10 @@ using System.Collections.Generic;
 using System.Data;
 using System.Data.Entity;
 using System.Data.SqlClient;
+using System.Drawing;
+using System.Drawing.Drawing2D;
+using System.Drawing.Imaging;
+using System.IO;
 using System.Linq;
 using System.Net;
 using System.Web;
@@ -77,6 +81,30 @@ namespace DeskDex.Controllers
                 station.Equipment = db.Equipment.Where(o => stationViewModel.SelectedEquipment.Contains(o.ID)).ToList();
                 station.Type = db.WorkStyles.Find(stationViewModel.selectedWorkStyle);
 
+                // handle image
+                try
+                {
+                    if (stationViewModel.File.ContentLength > 0)
+                    {
+                        // get file name
+                        string _FileName = $@"{Guid.NewGuid()}.jpg";
+                        string _Path = Path.Combine(Server.MapPath("~/Uploaded"), _FileName);
+
+                        // convert image
+                        Image scaled = Resize(Image.FromStream(stationViewModel.File.InputStream), 600, 600);
+
+                        scaled.Save(_Path, ImageFormat.Jpeg);
+
+                        station.FilePath = "/Uploaded/" + _FileName;
+
+                        scaled.Dispose();
+                    }
+                }
+                catch (Exception e)
+                {
+                    ViewBag.Message = "File upload failed.";
+                }
+
                 db.Stations.Add(station);
                 db.SaveChanges();
                 return RedirectToAction("Index");
@@ -132,9 +160,32 @@ namespace DeskDex.Controllers
                 var station = stationViewModel.Station;
 
                 var oldEntry = db.Stations.Find(station.ID);
-
                 // update old row
                 db.Entry(oldEntry).CurrentValues.SetValues(station);
+
+                // handle image
+                try
+                { 
+                    if (stationViewModel.File.ContentLength > 0)
+                    {
+                        // get file name
+                        string _FileName = $@"{Guid.NewGuid()}.jpg";
+                        string _Path = Path.Combine(Server.MapPath("~/Uploaded"), _FileName);
+
+                        // convert image
+                        Image scaled = Resize(Image.FromStream(stationViewModel.File.InputStream), 600, 600);
+
+                        scaled.Save(_Path, ImageFormat.Jpeg);
+
+                        oldEntry.FilePath = "/Uploaded/" + _FileName;
+
+                        scaled.Dispose();
+                    }
+                } catch (Exception e)
+                {
+                    ViewBag.Message = "File upload failed.";
+                }
+
                 oldEntry.Equipment = db.Equipment.Where(o => stationViewModel.SelectedEquipment.Contains(o.ID)).ToList();
                 oldEntry.Type = db.WorkStyles.Find(stationViewModel.selectedWorkStyle);
 
@@ -168,6 +219,40 @@ namespace DeskDex.Controllers
             db.Stations.Remove(station);
             db.SaveChanges();
             return RedirectToAction("Index");
+        }
+
+        public Image Resize(Image current, int maxWidth, int maxHeight)
+        {
+            /* resizes an image to fit within provided size limitations
+             */
+
+            int width, height;
+            #region reckon size 
+            if (current.Width > current.Height)
+            {
+                width = maxWidth;
+                height = Convert.ToInt32(current.Height * maxHeight / (double)current.Width);
+            }
+            else
+            {
+                width = Convert.ToInt32(current.Width * maxWidth / (double)current.Height);
+                height = maxHeight;
+            }
+            #endregion
+
+            #region get resized bitmap 
+            var canvas = new Bitmap(width, height);
+
+            using (var graphics = Graphics.FromImage(canvas))
+            {
+                graphics.CompositingQuality = CompositingQuality.HighSpeed;
+                graphics.InterpolationMode = InterpolationMode.HighQualityBicubic;
+                graphics.CompositingMode = CompositingMode.SourceCopy;
+                graphics.DrawImage(current, 0, 0, width, height);
+            }
+
+            return canvas;
+            #endregion
         }
 
         protected override void Dispose(bool disposing)
