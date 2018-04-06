@@ -160,6 +160,9 @@ namespace DeskDex.Controllers
                 var station = stationViewModel.Station;
 
                 var oldEntry = db.Stations.Find(station.ID);
+
+                var ogImage = oldEntry.FilePath;
+
                 // update old row
                 db.Entry(oldEntry).CurrentValues.SetValues(station);
 
@@ -184,6 +187,8 @@ namespace DeskDex.Controllers
                 } catch (Exception e)
                 {
                     ViewBag.Message = "File upload failed.";
+                    // restore previous image
+                    oldEntry.FilePath = ogImage;
                 }
 
                 oldEntry.Equipment = db.Equipment.Where(o => stationViewModel.SelectedEquipment.Contains(o.ID)).ToList();

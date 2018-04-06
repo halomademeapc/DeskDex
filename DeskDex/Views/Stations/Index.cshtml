@@ -4,65 +4,63 @@
     ViewBag.Title = "Index";
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
+<div class="container mt-4">
+    <h2 class="float-sm-left">Stations</h2>
 
-<h2>Index</h2>
+    <div class="float-sm-right btn-group" role="group">
+        <a href="@Url.Action("Create")" class="btn btn-primary"><i class="fas fa-plus mr-1"></i> Create New</a>
+    </div>
+    <div class="clearfix"></div>
 
-<p>
-    @Html.ActionLink("Create New", "Create")
-</p>
-<table class="table">
-    <tr>
-        <th>
-            @Html.DisplayNameFor(model => model.PhysicalAddress)
-        </th>
-        <th>
-            @Html.DisplayNameFor(model => model.Location)
-        </th>
-        <th>
-            @Html.DisplayNameFor(model => model.Floor)
-        </th>
-        <th>
-            @Html.DisplayNameFor(model => model.Capacity)
-        </th>
-        <th>
-            @Html.DisplayNameFor(model => model.Type)
-        </th>
-        <th>
-            @Html.DisplayNameFor(model => model.Equipment)
-        </th>
-        <th></th>
-    </tr>
+    <nav class="breadcrumb my-3">
+        @Html.ActionLink("DeskDex", "Index", "Home", null, new { @class = "breadcrumb-item" })
+        <span class="breadcrumb-item">Management</span>
+        <span class="breadcrumb-item active">Stations</span>
+    </nav>
 
-    @foreach (var item in Model)
-    {
-        <tr>
-            <td>
-                @Html.DisplayFor(modelItem => item.PhysicalAddress)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Location)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Floor)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Capacity)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Type.Name)
-            </td>
-            <td>
-                @foreach (var equip in item.Equipment)
-                {
-                    <div>@equip.Name</div>
-                }
-            </td>
-            <td>
-                @Html.ActionLink("Edit", "Edit", new { id = item.ID }) |
-                @Html.ActionLink("Details", "Details", new { id = item.ID }) |
-                @Html.ActionLink("Delete", "Delete", new { id = item.ID })
-            </td>
-        </tr>
-    }
-
-</table>
+    <ul class="list-group-flush mt-3 pl-0">
+        <li class="list-group-item grey lighten-4 d-none d-sm-block">
+            <div class="row lead">
+                <div class="col-sm-3 lead">
+                    @Html.DisplayNameFor(model => model.Location)
+                </div>
+                <div class="col-sm-3">
+                    @Html.DisplayNameFor(model => model.PhysicalAddress)
+                </div>
+                <div class="col-sm-2">
+                    @Html.DisplayNameFor(model => model.Type)
+                </div>
+                <div class="col-sm-1">
+                    @Html.DisplayNameFor(model => model.Floor)
+                </div>
+                <div class="col-sm-3 text-right">
+                    Actions
+                </div>
+            </div>
+        </li>
+        @foreach (var item in Model)
+        {
+            <li class="list-group-item list-group-item-action">
+                <div class="row">
+                    <div class="col-sm-3">
+                        <a href="@Url.Action("Details", new { id = item.ID })">@Html.DisplayFor(modelItem => item.Location)</a>
+                    </div>
+                    <div class="col-sm-3">
+                        @Html.DisplayFor(modelItem => item.PhysicalAddress)
+                    </div>
+                    <div class="col-sm-2">
+                        @Html.DisplayFor(modelItem => item.Type.Name)
+                    </div>
+                    <div class="col-sm-1">
+                        <span class="d-sm-none">Floor </span>@Html.DisplayFor(modelItem => item.Floor)
+                    </div>
+                    <div class="col-sm-3 text-right" role="group">
+                        <a href="@Url.Action("Details", new { id = item.ID })" class="mx-2 btn-flat"><i class="fas fa-info"></i></a>
+                        <a href="@Url.Action("Edit", new { id = item.ID })" class="mx-2 btn-flat"><i class="fas fa-edit"></i></a>
+                        <a href="@Url.Action("Delete", new { id = item.ID })" class="mx-2 btn-flat"><i class="fas fa-trash"></i></a>
+                    </div>
+                </div>
+            </li>
+        }
+    </ul>
+</div>

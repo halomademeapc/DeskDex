@@ -5,38 +5,42 @@
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
 
-<h2>Edit</h2>
+<div class="container mt-4">
+    <h2>Edit @Html.DisplayFor(model => model.Name)</h2>
+
+    <nav class="breadcrumb my-3">
+        @Html.ActionLink("DeskDex", "Index", "Home", null, new { @class = "breadcrumb-item" })
+        <span class="breadcrumb-item">Management</span>
+        @Html.ActionLink("Station Types", "Index", "WorkStyles", null, new { @class = "breadcrumb-item" })
+        <span class="breadcrumb-item">@Model.Name</span>
+        <span class="breadcrumb-item active">Edit</span>
+    </nav>
+
+    <div class="py-1"></div>
+    <div class="row justify-content-center">
+        <div class="card col-md-6">
+            <div class="card-body">
 
 
-@using (Html.BeginForm())
-{
-    @Html.AntiForgeryToken()
-    
-    <div class="form-horizontal">
-        <h4>WorkStyle</h4>
-        <hr />
-        @Html.ValidationSummary(true, "", new { @class = "text-danger" })
-        @Html.HiddenFor(model => model.ID)
-
-        <div class="form-group">
-            @Html.LabelFor(model => model.Name, htmlAttributes: new { @class = "control-label col-md-2" })
-            <div class="col-md-10">
-                @Html.EditorFor(model => model.Name, new { htmlAttributes = new { @class = "form-control" } })
-                @Html.ValidationMessageFor(model => model.Name, "", new { @class = "text-danger" })
-            </div>
-        </div>
-
-        <div class="form-group">
-            <div class="col-md-offset-2 col-md-10">
-                <input type="submit" value="Save" class="btn btn-default" />
+                @using (Html.BeginForm())
+                {
+                    @Html.AntiForgeryToken()
+                    <h4 class="card-title md-form form-group">
+                        @Html.EditorFor(model => model.Name, new { htmlAttributes = new { @class = "form-control" } })
+                        @Html.LabelFor(model => model.Name)
+                        @Html.ValidationMessageFor(model => model.Name, "", new { @class = "text-danger" })
+                    </h4>
+                    @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+                    @Html.HiddenFor(model => model.ID)
+                    <div class="text-right">
+                        <input type="submit" value="Save" class="btn btn-primary" />
+                    </div>
+                }
             </div>
         </div>
     </div>
-}
-
-<div>
-    @Html.ActionLink("Back to List", "Index")
 </div>
+
 
 @section Scripts {
     @Scripts.Render("~/bundles/jqueryval")
