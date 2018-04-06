@@ -1,1 +1,15 @@
 /* Your custom styles */
+
+.fullscreen {
+    display: block;
+    width: 100vw;
+    height: 100vh;
+    background-color: #EFEFEF;
+}
+
+.fixed-br {
+    display: block;
+    position: fixed;
+    bottom: 1em;
+    right: 1em;
+}

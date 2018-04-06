@@ -1,0 +1,32 @@
+﻿@{
+    ViewBag.Title = "About";
+    ViewBag.Active = "map";
+    ViewBag.Fullscreen = true;
+}
+
+<div class="fullscreen">
+
+</div>
+
+<div class="fixed-top">
+    <!-- top controls -->
+</div>
+
+<div class="fixed-br">
+    <!-- bottom controls -->
+    <div class="form-inline">
+        <div class="input-group">
+            <div class="input-group-prepend">
+                <div class="input-group-text"><label for="floorSelect" class="mr-2">Floor</label></div>
+            </div>
+
+            <select class="form-control py-1" id="floorSelect">
+                @for (int i = 1; i <= 7; i++)
+                {
+                    <option value="@i" @(ViewBag.DefaultFloor == i ? "selected" : "")>@i</option>
+                }
+                <option value="0" @(ViewBag.DefaultFloor == 0 ? "selected" : "")>Other</option>
+            </select>
+        </div>
+    </div>
+</div>
