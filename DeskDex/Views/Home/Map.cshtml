@@ -74,7 +74,7 @@
     <script>
         var defaultFloor = @(ViewBag.DefaultFloor != null ? ViewBag.DefaultFloor : 1);
         $(document).ready(function () {
-            console.log("let's do this!");
+            //console.log("let's do this!");
             loadMap(defaultFloor);
 
             $("#floorSelect").on("change", function () {
@@ -98,7 +98,7 @@
         }
 
         function loadMap(floor) {
-            console.log("Loading floor " + floor);
+            //console.log("Loading floor " + floor);
             var olDiv = $("#overlays");
 
             //clear existing elements
@@ -106,10 +106,10 @@
 
             // call API to get desk locations on this floor
             $.getJSON('/api/map/' + floor, function (data) {
-                console.log(data);
+                //console.log(data);
                 for (var i = 0; i < data.length; i++) {
                     var thisStation = createStation(data[i]);
-                    console.log(thisStation);
+                    //console.log(thisStation);
                     olDiv.append(thisStation);
                 }
             });
@@ -136,7 +136,7 @@
             stationDiv.append(tooltip);
 
             $(stationDiv).on("click", function (event) {
-                console.log("station clicked");
+                //console.log("station clicked");
                 $(this).zoomTarget();
                 checkDetailStatus();
             })
@@ -146,7 +146,7 @@
 
         function checkDetailStatus() {
             setTimeout(function () {
-                console.log("cds called");
+                //console.log("cds called");
                 var tar = $(".stationDiv.selectedZoomTarget");
                 if (tar.length > 0) {
                     try {
@@ -155,7 +155,7 @@
                             $("#roomDetails").slideDown();
                         }
                     } catch (e) {
-                        console.log(e);
+                        //console.log(e);
                         $("#roomDetails").slideUp();
                     }
                 } else {
@@ -166,7 +166,7 @@
 
         function updateDetails(stationID) {
             $.getJSON('/api/Desk/' + stationID, function (data) {
-                console.log("loaded details for station " + data.DeskID);
+                //console.log("loaded details for station " + data.DeskID);
 
                 $("#rdLocation").text(data.Location);
                 $("#rdType").text(data.WorkStyle);
@@ -183,6 +183,9 @@
                     var item = $(document.createElement('li'));
                     item.text(data.Equipment[i]);
                     $("#rdEquipment").append(item);
+                }
+                if (data.ImagePath != null) {
+                    $("#rdImage").attr('src', data.ImagePath);
                 }
             });
         }
