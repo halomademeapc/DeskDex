@@ -44,15 +44,25 @@
             </div>
         </span>
     </div>
-
+    <div class="clearfix"></div>
     <!-- popup info card -->
-    <div class="row align-content-center">
-        <div class="card col-md-8 row">
-            <div>
-
-            </div>
-            <div class="col-4 d-sm-none">
-                <img src="#" class="img-fluid" alt="Image of room" />
+    <div class="card" id="roomDetails" style="display:none">
+        <div class="container">
+            <div class="row">
+                <div class="card-body col-md-9">
+                    <h4 class="card-title"><span id="rdLocation">Room Name</span> - <span id="rdType">Work Style</span></h4>
+                    <div class="card-text">
+                        <div><strong>Capacity</strong> <span id="rdCapacity">1</span><span id="rdCheckin"> | Last check-in by <strong id="rdPerson">somebody</strong> at <strong id="rdTime">some time</strong>.</span></div>
+                        <div>Available Equipment:</div>
+                        <ul class="text-small" id="rdEquipment">
+                            <li>Something</li>
+                            <li>Something else</li>
+                        </ul>
+                    </div>
+                </div>
+                <div class="col-md-3 d-none d-md-block pr-0">
+                    <img src="~/uploaded/54d9364c-60a6-49cb-af1d-88ef83e73e6b.jpg" class="room-img" alt="Image of room" id="rdImage" />
+                </div>
             </div>
         </div>
     </div>
@@ -78,6 +88,9 @@
 
             setOverlay();
             $(window).resize(setOverlay);
+
+            $(".zoomViewport").on("click", checkDetailStatus);
+            $("#overlays").on("click", checkDetailStatus);
         });
 
         function setOverlay() {
@@ -115,6 +128,7 @@
             stationDiv.css("left", (stationViewModel.x1*100) + "%");
             stationDiv.css("top", (stationViewModel.y1 * 100) + "%");
             stationDiv.data("targetsize", .5);
+            stationDiv.data("stationID", stationViewModel.DeskID);
 
             var tooltip = $(document.createElement('span'));
             tooltip.addClass("tooltiptext");
@@ -124,9 +138,53 @@
             $(stationDiv).on("click", function (event) {
                 console.log("station clicked");
                 $(this).zoomTarget();
+                checkDetailStatus();
             })
 
             return stationDiv;
+        }
+
+        function checkDetailStatus() {
+            setTimeout(function () {
+                console.log("cds called");
+                var tar = $(".stationDiv.selectedZoomTarget");
+                if (tar.length > 0) {
+                    try {
+                        if (tar.data("stationID") > 0) {
+                            updateDetails(tar.data("stationID"));
+                            $("#roomDetails").slideDown();
+                        }
+                    } catch (e) {
+                        console.log(e);
+                        $("#roomDetails").slideUp();
+                    }
+                } else {
+                    $("#roomDetails").slideUp();
+                }
+            }, 700);
+        }
+
+        function updateDetails(stationID) {
+            $.getJSON('/api/Desk/' + stationID, function (data) {
+                console.log("loaded details for station " + data.DeskID);
+
+                $("#rdLocation").text(data.Location);
+                $("#rdType").text(data.WorkStyle);
+                $("#rdCapacity").text(data.Capacity);
+                if (data.LastUpdate != null && data.UserName != null) {
+                    $("#rdCheckin").show();
+                    $("#rdPerson").text(data.UserName);
+                    $("#rdTime").text(data.LastUpdate);
+                } else {
+                    $("#rdCheckin").hide();
+                }
+                $("#rdEquipment").empty();
+                for (var i = 0; i < data.Equipment.length; i++) {
+                    var item = $(document.createElement('li'));
+                    item.text(data.Equipment[i]);
+                    $("#rdEquipment").append(item);
+                }
+            });
         }
     </script>
 }
@@ -170,6 +228,15 @@
             position: absolute;
         }
 
+        .room-img {
+            height: 10em;
+            width: 100%;
+            object-fit: cover;
+            object-position: center;
+            border-radius: 0.3em !important;
+            margin: 1em;
+        }
+
         .workstyle-agile {
             background-color: rgba(63, 136, 191, 0.45);
         }
@@ -202,6 +269,10 @@
 
         .stationDiv:hover .tooltiptext {
             visibility: visible;
+        }
+
+        .text-small {
+            font-size: smaller;
         }
     </style>
 }
