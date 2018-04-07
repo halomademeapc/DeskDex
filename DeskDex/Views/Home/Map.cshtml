@@ -1,32 +1,196 @@
 ﻿@{
-    ViewBag.Title = "About";
+    ViewBag.Title = "Map";
     ViewBag.Active = "map";
     ViewBag.Fullscreen = true;
 }
 
-<div class="fullscreen">
+<div class="fullscreen zoomViewport">
+    <div class="zoomContainer">
+        <div class="pt-5"></div>
+        <div id="mapContainer">
+            <!-- map overlays -->
+            <div id="overlays">
+                <span class="zoomTarget" data-closeclick="true">click me!</span>
 
+            </div>
+            <!-- map -->
+            <img src="@(Url.Content("~/Content/img/svg/loading.svg"))" alt="Floor Map" id="mapImage" />
+        </div>
+    </div>
 </div>
 
 <div class="fixed-top">
     <!-- top controls -->
 </div>
 
-<div class="fixed-br">
+<div class="fixed-bottom">
     <!-- bottom controls -->
-    <div class="form-inline">
-        <div class="input-group">
-            <div class="input-group-prepend">
-                <div class="input-group-text"><label for="floorSelect" class="mr-2">Floor</label></div>
-            </div>
+    <div class="float-right">
+        <span class="form-inline mr-3 mb-3">
+            <div class="input-group">
+                <div class="input-group-prepend">
+                    <div class="input-group-text"><label for="floorSelect" class="mr-2">Floor</label></div>
+                </div>
 
-            <select class="form-control py-1" id="floorSelect">
-                @for (int i = 1; i <= 7; i++)
-                {
-                    <option value="@i" @(ViewBag.DefaultFloor == i ? "selected" : "")>@i</option>
-                }
-                <option value="0" @(ViewBag.DefaultFloor == 0 ? "selected" : "")>Other</option>
-            </select>
+                <select class="form-control py-1" id="floorSelect">
+                    @for (int i = 1; i <= 7; i++)
+                    {
+                        <option value="@i" @(ViewBag.DefaultFloor == i ? "selected" : "")>@i</option>
+                    }
+                    <option value="0" @(ViewBag.DefaultFloor == 0 ? "selected" : "")>Other</option>
+                </select>
+            </div>
+        </span>
+    </div>
+
+    <!-- popup info card -->
+    <div class="row align-content-center">
+        <div class="card col-md-8 row">
+            <div>
+
+            </div>
+            <div class="col-4 d-sm-none">
+                <img src="#" class="img-fluid" alt="Image of room" />
+            </div>
         </div>
     </div>
 </div>
+
+
+@section Scripts {
+    <script src="@Url.Content("~/Content/js/jquery.zoomooz.min.js")"></script>
+    <script>
+        var defaultFloor = @(ViewBag.DefaultFloor != null ? ViewBag.DefaultFloor : 1);
+        $(document).ready(function () {
+            console.log("let's do this!");
+            loadMap(defaultFloor);
+
+            $("#floorSelect").on("change", function () {
+                var targetFloor = $("#floorSelect").val();
+                loadMap(targetFloor);
+            });
+
+            $("#mapImage").on("dragstart", function (event) {
+                event.preventDefault();
+            })
+        });
+
+
+        function loadMap(floor) {
+            console.log("Loading floor " + floor);
+            var olDiv = $("#overlays");
+
+            //clear existing elements
+            olDiv.empty();
+
+            // call API to get desk locations on this floor
+            $.getJSON('/api/map/' + floor, function (data) {
+                console.log(data);
+                for (var i = 0; i < data.length; i++) {
+                    var thisStation = createStation(data[i]);
+                    console.log(thisStation);
+                    olDiv.append(thisStation);
+                }
+            });
+
+            // load background svg
+            $("#mapImage").attr('src', '@(Url.Content("~/Content/img/svg/floor"))' + floor + '.svg');
+        }
+
+        function createStation(stationViewModel) {
+            var stationDiv = $(document.createElement('div'));
+            var size = [(stationViewModel.x2 - stationViewModel.x1)*100, (stationViewModel.y2 - stationViewModel.y1)*100];
+            stationDiv.addClass("stationDiv");
+            stationDiv.addClass(("workstyle-" + stationViewModel.WorkStyle).toLowerCase().replace(" ", "-"));
+            stationDiv.css("width", size[0] + "%");
+            stationDiv.css("height", size[1] + "%");
+            stationDiv.css("left", (stationViewModel.x1*100) + "%");
+            stationDiv.css("top", (stationViewModel.y1 * 100) + "%");
+            stationDiv.data("targetsize", .5);
+
+            var tooltip = $(document.createElement('span'));
+            tooltip.addClass("tooltiptext");
+            tooltip.text(stationViewModel.Location);
+            stationDiv.append(tooltip);
+
+            $(stationDiv).on("click", function (event) {
+                console.log("station clicked");
+                $(this).zoomTarget();
+            })
+
+            return stationDiv;
+        }
+    </script>
+}
+
+@section Styles {
+    <style>
+        /* Your custom styles */
+
+        .fullscreen {
+            display: block;
+            width: 100vw;
+            height: 100vh;
+            overflow: hidden;
+        }
+
+        .fixed-br {
+            display: block;
+            position: fixed;
+            bottom: 1em;
+            right: 1em;
+        }
+
+        #mapImage {
+            object-fit: contain;
+            max-width: 100%;
+            max-height: 100%;
+        }
+
+        #overlays {
+            top: 0;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            position: absolute;
+        }
+
+        .stationDiv {
+            position: absolute;
+        }
+
+        .workstyle-agile {
+            background-color: rgba(63, 136, 191, 0.45);
+        }
+
+        .workstyle-assigned-resident {
+            background-color: rgba(196, 148, 58, 0.45);
+        }
+
+        .workstyle-resident {
+            background-color: rgba(138, 196, 58, 0.45);
+        }
+
+        .workstyle- {
+            background-color: rgba(130, 60, 168, 0.45);
+        }
+
+        .stationDiv .tooltiptext {
+            visibility: hidden;
+            width: 120px;
+            background-color: black;
+            color: #fff;
+            text-align: center;
+            border-radius: 6px;
+            padding: 5px 0;
+            /* Position the tooltip */
+            position: absolute;
+            z-index: 1;
+            pointer-events: none;
+        }
+
+        .stationDiv:hover .tooltiptext {
+            visibility: visible;
+        }
+    </style>
+}

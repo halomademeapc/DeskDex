@@ -57,6 +57,7 @@ namespace DeskDex.Models
         public int Capacity { get; set; }
         public List<String> Equipment { get; set; }
         public string Location { get; set; }
+        public string ImagePath { get; set; }
     }
 
     public class CheckinViewModel
