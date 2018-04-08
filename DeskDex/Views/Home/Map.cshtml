@@ -205,6 +205,9 @@
                 }
                 if (data.ImagePath != null) {
                     $("#rdImage").attr('src', data.ImagePath);
+                    $("#rdImage").css("display", "block");
+                } else {
+                    $("#rdImage").css("display", "none");
                 }
             });
         }
