@@ -19,11 +19,15 @@
             </div>
         </div>
     </div>
+    <div class="card card-dark grey darken-3 white-text" id="followTooltip" style="display: none;">
+        <div class="py-1 px-3">
+            <div class="card-text" id="tooltipText">
+                test
+            </div>
+        </div>
+    </div>
 </div>
 
-<div class="fixed-top">
-    <!-- top controls -->
-</div>
 
 <div class="fixed-bottom">
     <!-- bottom controls -->
@@ -31,15 +35,15 @@
         <span class="form-inline mr-3 mb-3">
             <div class="input-group">
                 <div class="input-group-prepend">
-                    <div class="input-group-text"><label for="floorSelect" class="mr-2">Floor</label></div>
+                    <div class="input-group-text"><label for="floorSelect" class="mr-2 my-0">Floor</label></div>
                 </div>
 
                 <select class="form-control py-1" id="floorSelect">
                     @for (int i = 1; i <= 7; i++)
                     {
-                        <option value="@i" @(ViewBag.DefaultFloor == i ? "selected" : "")>@i</option>
+                        <option value="@i" @(ViewBag.DefaultFloor == i.ToString() ? "selected" : "")>@i</option>
                     }
-                    <option value="0" @(ViewBag.DefaultFloor == 0 ? "selected" : "")>Other</option>
+                    <option value="0" @(ViewBag.DefaultFloor == 0.ToString() ? "selected" : "")>Other</option>
                 </select>
             </div>
         </span>
@@ -93,12 +97,22 @@
             $("#overlays").on("click", checkDetailStatus);
         });
 
+        $(document).on('mousemove', function (e) {
+            var ftt = $("#followTooltip");
+            ftt.css({
+                left: (e.pageX - (ftt.width() / 2)),
+                top: (e.pageY - ftt.height() - 5)
+            });
+        });
+
         function setOverlay() {
             $("#overlays").width($("#mapContainer").width());
         }
 
         function loadMap(floor) {
-            //console.log("Loading floor " + floor);
+            // set cookie to remember current floor
+            document.cookie = "mapFloor=" + floor + ";";
+
             var olDiv = $("#overlays");
 
             //clear existing elements
@@ -130,15 +144,20 @@
             stationDiv.data("targetsize", .5);
             stationDiv.data("stationID", stationViewModel.DeskID);
 
-            var tooltip = $(document.createElement('span'));
-            tooltip.addClass("tooltiptext");
-            tooltip.text(stationViewModel.Location);
-            stationDiv.append(tooltip);
-
             $(stationDiv).on("click", function (event) {
                 //console.log("station clicked");
+                $("#followTooltip").fadeOut(200);
                 $(this).zoomTarget();
                 checkDetailStatus();
+            });
+
+            $(stationDiv).on("mouseover", function (event) {
+                $("#tooltipText").text(stationViewModel.Location);
+                $("#followTooltip").fadeIn(100);
+            });
+
+            $(stationDiv).on("mouseleave", function (event) {
+                $("#followTooltip").fadeOut(200);
             })
 
             return stationDiv;
@@ -256,26 +275,14 @@
             background-color: rgba(130, 60, 168, 0.45);
         }
 
-        .stationDiv .tooltiptext {
-            visibility: hidden;
-            width: 120px;
-            background-color: black;
-            color: #fff;
-            text-align: center;
-            border-radius: 6px;
-            padding: 5px 0;
-            /* Position the tooltip */
-            position: absolute;
-            z-index: 1;
-            pointer-events: none;
-        }
-
-        .stationDiv:hover .tooltiptext {
-            visibility: visible;
-        }
-
         .text-small {
             font-size: smaller;
+        }
+
+        #followTooltip {
+            position: absolute;
+            display: block;
+            pointer-events: none;
         }
     </style>
 }
