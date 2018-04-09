@@ -1,0 +1,291 @@
+﻿@{
+    ViewBag.Title = "Map";
+    ViewBag.Active = "map";
+    ViewBag.Fullscreen = true;
+}
+
+<div class="fullscreen zoomViewport">
+    <div class="zoomContainer">
+        <div class="container">
+            <div class="pt-5"></div>
+            <div id="mapContainer">
+                <!-- map overlays -->
+                <div id="overlays">
+                    <span class="zoomTarget" data-closeclick="true">click me!</span>
+
+                </div>
+                <!-- map -->
+                <img src="@(Url.Content("~/Content/img/svg/loading.svg"))" alt="Floor Map" id="mapImage" />
+            </div>
+        </div>
+    </div>
+    <div class="card card-dark grey darken-3 white-text" id="followTooltip" style="display: none;">
+        <div class="py-1 px-3">
+            <div class="card-text" id="tooltipText">
+                test
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<div class="fixed-bottom">
+    <!-- bottom controls -->
+    <div class="float-right">
+        <span class="form-inline mr-3 mb-3">
+            <div class="input-group">
+                <div class="input-group-prepend">
+                    <div class="input-group-text"><label for="floorSelect" class="mr-2 my-0">Floor</label></div>
+                </div>
+
+                <select class="form-control py-1" id="floorSelect">
+                    @for (int i = 1; i <= 7; i++)
+                    {
+                        <option value="@i" @(ViewBag.DefaultFloor == i.ToString() ? "selected" : "")>@i</option>
+                    }
+                    <option value="0" @(ViewBag.DefaultFloor == 0.ToString() ? "selected" : "")>Other</option>
+                </select>
+            </div>
+        </span>
+    </div>
+    <div class="clearfix"></div>
+    <!-- popup info card -->
+    <div class="card" id="roomDetails" style="display:none">
+        <div class="container">
+            <div class="row">
+                <div class="card-body col-md-9">
+                    <h4 class="card-title"><span id="rdLocation">Room Name</span> - <span id="rdType">Work Style</span></h4>
+                    <div class="card-text">
+                        <div><strong>Capacity</strong> <span id="rdCapacity">1</span><span id="rdCheckin"> | Last check-in by <strong id="rdPerson">somebody</strong> at <strong id="rdTime">some time</strong>.</span></div>
+                        <div>Available Equipment:</div>
+                        <ul class="text-small" id="rdEquipment">
+                            <li>Something</li>
+                            <li>Something else</li>
+                        </ul>
+                    </div>
+                </div>
+                <div class="col-md-3 d-none d-md-block pr-0">
+                    <img src="~/uploaded/54d9364c-60a6-49cb-af1d-88ef83e73e6b.jpg" class="room-img" alt="Image of room" id="rdImage" />
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+@section Scripts {
+    <script src="@Url.Content("~/Content/js/jquery.zoomooz.min.js")"></script>
+    <script>
+        var defaultFloor = @(ViewBag.DefaultFloor != null ? ViewBag.DefaultFloor : 1);
+        $(document).ready(function () {
+            //console.log("let's do this!");
+            loadMap(defaultFloor);
+
+            $("#floorSelect").on("change", function () {
+                var targetFloor = $("#floorSelect").val();
+                loadMap(targetFloor);
+            });
+
+            $("#mapImage").on("dragstart", function (event) {
+                event.preventDefault();
+            })
+
+            setOverlay();
+            $(window).resize(setOverlay);
+
+            $(".zoomViewport").on("click", checkDetailStatus);
+            $("#overlays").on("click", checkDetailStatus);
+        });
+
+        $(document).on('mousemove', function (e) {
+            var ftt = $("#followTooltip");
+            ftt.css({
+                left: (e.pageX - (ftt.width() / 2)),
+                top: (e.pageY - ftt.height() - 5)
+            });
+        });
+
+        function setOverlay() {
+            $("#overlays").width($("#mapContainer").width());
+        }
+
+        function loadMap(floor) {
+            // set cookie to remember current floor
+            document.cookie = "mapFloor=" + floor + ";";
+
+            var olDiv = $("#overlays");
+
+            //clear existing elements
+            olDiv.empty();
+
+            // call API to get desk locations on this floor
+            $.getJSON('/api/map/' + floor, function (data) {
+                //console.log(data);
+                for (var i = 0; i < data.length; i++) {
+                    var thisStation = createStation(data[i]);
+                    //console.log(thisStation);
+                    olDiv.append(thisStation);
+                }
+            });
+
+            // load background svg
+            $("#mapImage").attr('src', '@(Url.Content("~/Content/img/svg/floor"))' + floor + '.svg');
+        }
+
+        function createStation(stationViewModel) {
+            var stationDiv = $(document.createElement('div'));
+            var size = [(stationViewModel.x2 - stationViewModel.x1)*100, (stationViewModel.y2 - stationViewModel.y1)*100];
+            stationDiv.addClass("stationDiv");
+            stationDiv.addClass(("workstyle-" + stationViewModel.WorkStyle).toLowerCase().replace(" ", "-"));
+            stationDiv.css("width", size[0] + "%");
+            stationDiv.css("height", size[1] + "%");
+            stationDiv.css("left", (stationViewModel.x1*100) + "%");
+            stationDiv.css("top", (stationViewModel.y1 * 100) + "%");
+            stationDiv.data("targetsize", .5);
+            stationDiv.data("stationID", stationViewModel.DeskID);
+
+            $(stationDiv).on("click", function (event) {
+                //console.log("station clicked");
+                $("#followTooltip").fadeOut(200);
+                $(this).zoomTarget();
+                checkDetailStatus();
+            });
+
+            $(stationDiv).on("mouseover", function (event) {
+                $("#tooltipText").text(stationViewModel.Location);
+                $("#followTooltip").fadeIn(100);
+            });
+
+            $(stationDiv).on("mouseleave", function (event) {
+                $("#followTooltip").fadeOut(200);
+            })
+
+            return stationDiv;
+        }
+
+        function checkDetailStatus() {
+            setTimeout(function () {
+                //console.log("cds called");
+                var tar = $(".stationDiv.selectedZoomTarget");
+                if (tar.length > 0) {
+                    try {
+                        if (tar.data("stationID") > 0) {
+                            updateDetails(tar.data("stationID"));
+                            $("#roomDetails").slideDown();
+                        }
+                    } catch (e) {
+                        //console.log(e);
+                        $("#roomDetails").slideUp();
+                    }
+                } else {
+                    $("#roomDetails").slideUp();
+                }
+            }, 700);
+        }
+
+        function updateDetails(stationID) {
+            $.getJSON('/api/Desk/' + stationID, function (data) {
+                //console.log("loaded details for station " + data.DeskID);
+
+                $("#rdLocation").text(data.Location);
+                $("#rdType").text(data.WorkStyle);
+                $("#rdCapacity").text(data.Capacity);
+                if (data.LastUpdate != null && data.UserName != null) {
+                    $("#rdCheckin").show();
+                    $("#rdPerson").text(data.UserName);
+                    $("#rdTime").text(data.LastUpdate);
+                } else {
+                    $("#rdCheckin").hide();
+                }
+                $("#rdEquipment").empty();
+                for (var i = 0; i < data.Equipment.length; i++) {
+                    var item = $(document.createElement('li'));
+                    item.text(data.Equipment[i]);
+                    $("#rdEquipment").append(item);
+                }
+                if (data.ImagePath != null) {
+                    $("#rdImage").attr('src', data.ImagePath);
+                    $("#rdImage").css("display", "block");
+                } else {
+                    $("#rdImage").css("display", "none");
+                }
+            });
+        }
+    </script>
+}
+
+@section Styles {
+    <style>
+        /* Your custom styles */
+
+        .fullscreen {
+            display: block;
+            width: 100vw;
+            height: 100vh;
+            overflow: hidden;
+        }
+
+        .fixed-br {
+            display: block;
+            position: fixed;
+            bottom: 1em;
+            right: 1em;
+        }
+
+        #mapImage {
+            object-fit: contain;
+            width: 100%;
+            max-width: 100%;
+            max-height: 100%;
+        }
+
+        #overlays {
+            top: 3em;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            margin-left: auto;
+            margin-right: auto;
+            position: absolute;
+        }
+
+        .stationDiv {
+            position: absolute;
+        }
+
+        .room-img {
+            height: 10em;
+            width: 100%;
+            object-fit: cover;
+            object-position: center;
+            border-radius: 0.3em !important;
+            margin: 1em;
+        }
+
+        .workstyle-agile {
+            background-color: rgba(63, 136, 191, 0.45);
+        }
+
+        .workstyle-assigned-resident {
+            background-color: rgba(196, 148, 58, 0.45);
+        }
+
+        .workstyle-resident {
+            background-color: rgba(138, 196, 58, 0.45);
+        }
+
+        .workstyle- {
+            background-color: rgba(130, 60, 168, 0.45);
+        }
+
+        .text-small {
+            font-size: smaller;
+        }
+
+        #followTooltip {
+            position: absolute;
+            display: block;
+            pointer-events: none;
+        }
+    </style>
+}

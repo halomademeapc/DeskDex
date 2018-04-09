@@ -26,11 +26,12 @@ namespace DeskDex.Controllers
             List<DeskMapViewModel> vm = new List<DeskMapViewModel>();
             //var query;
             List<Station> Stations;
-            
-            if(floor != null)
+
+            if (floor != null)
             {
                 Stations = db.Stations.Where(s => s.Floor == floor).ToList();
-            } else
+            }
+            else
             {
                 Stations = db.Stations.ToList();
             }
@@ -54,16 +55,33 @@ namespace DeskDex.Controllers
         }
 
         // GET: api/Desk/5
-        [ResponseType(typeof(Station))]
-        public IHttpActionResult GetStation(int id)
+        [ResponseType(typeof(DeskDetailViewModel))]
+        public DeskDetailViewModel GetStation(int id)
         {
             Station station = db.Stations.Find(id);
             if (station == null)
             {
-                return NotFound();
+                return null;
             }
-
-            return Ok(station);
+            else
+            {
+                var ddvm = new DeskDetailViewModel
+                {
+                    DeskID = station.ID,
+                    WorkStyle = station.Type.Name,
+                    LastUpdate = station.LastCheckin?.LastUpdate,
+                    UserName = station.LastCheckin?.Username,
+                    Capacity = station.Capacity,
+                    Equipment = new List<string>(),
+                    Location = station.Location,
+                    ImagePath = station.FilePath
+                };
+                foreach (var equip in station.Equipment)
+                {
+                    ddvm.Equipment.Add(equip.Name);
+                }
+                return ddvm;
+            }
         }
 
         // PUT: api/Desk/5

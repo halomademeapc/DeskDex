@@ -13,17 +13,12 @@ namespace DeskDex.Controllers
             return View();
         }
 
-        public ActionResult About()
+        public ActionResult Map()
         {
-            ViewBag.Message = "Your application description page.";
-
-            return View();
-        }
-
-        public ActionResult Contact()
-        {
-            ViewBag.Message = "Your contact page.";
-
+            if (Request.Cookies["mapFloor"] != null)
+            {
+                ViewBag.DefaultFloor = Request.Cookies["mapFloor"].Value.ToString();
+            }
             return View();
         }
     }
