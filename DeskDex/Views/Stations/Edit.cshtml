@@ -151,7 +151,8 @@
             image.Jcrop({
                 onChange: setCoords,
                 onSelect: setCoords,
-                bgColor: 'white'
+                bgColor: 'white',
+                setSelect: [image.width() * parseFloat($("#Station_x1").val()), image.height() * parseFloat($("#Station_y1").val()), image.width() * parseFloat($("#Station_x2").val()), image.height() * parseFloat($("#Station_y2").val())],
             });
         }
     </script>
