@@ -1,3 +1,9 @@
 .overflow-hidden {
     overflow: hidden;
 }
+.click-none {
+    pointer-events: none;
+}
+.click-default {
+    pointer-events:auto;
+}

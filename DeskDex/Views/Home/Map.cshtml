@@ -1,4 +1,5 @@
-﻿@{
+﻿@model IEnumerable<DeskDex.Models.WorkStyle>
+@{
     ViewBag.Title = "Map";
     ViewBag.Active = "map";
     ViewBag.Fullscreen = true;
@@ -29,11 +30,21 @@
 </div>
 
 
-<div class="fixed-bottom">
+<div class="fixed-bottom click-none">
     <!-- bottom controls -->
     <div class="float-right">
+        <div class="text-right mb-1 mr-2">
+            <!-- legend -->
+            @foreach(var item in Model)
+            {
+                <div>
+                    <small>@item.Name</small>
+                    <span class="workstyle-@item.Name.ToLower().Replace(" ","-") px-2 my-1"></span>
+                </div>
+            }
+        </div>
         <span class="form-inline mr-3 mb-3">
-            <div class="input-group">
+            <div class="input-group click-default">
                 <div class="input-group-prepend">
                     <div class="input-group-text"><label for="floorSelect" class="mr-2 my-0">Floor</label></div>
                 </div>
@@ -48,9 +59,9 @@
             </div>
         </span>
     </div>
-    <div class="clearfix"></div>
+    <div class="clearfix click-none"></div>
     <!-- popup info card -->
-    <div class="card" id="roomDetails" style="display:none">
+    <div class="card click-default" id="roomDetails" style="display:none">
         <div class="container">
             <div class="row">
                 <div class="card-body col-md-9">
@@ -215,77 +226,13 @@
 }
 
 @section Styles {
-    <style>
-        /* Your custom styles */
-
-        .fullscreen {
-            display: block;
-            width: 100vw;
-            height: 100vh;
-            overflow: hidden;
-        }
-
-        .fixed-br {
-            display: block;
-            position: fixed;
-            bottom: 1em;
-            right: 1em;
-        }
-
-        #mapImage {
-            object-fit: contain;
-            width: 100%;
-            max-width: 100%;
-            max-height: 100%;
-        }
-
-        #overlays {
-            top: 3em;
-            bottom: 0;
-            left: 0;
-            right: 0;
-            margin-left: auto;
-            margin-right: auto;
-            position: absolute;
-        }
-
-        .stationDiv {
-            position: absolute;
-        }
-
-        .room-img {
-            height: 10em;
-            width: 100%;
-            object-fit: cover;
-            object-position: center;
-            border-radius: 0.3em !important;
-            margin: 1em;
-        }
-
-        .workstyle-agile {
-            background-color: rgba(63, 136, 191, 0.45);
-        }
-
-        .workstyle-unassigned-resident {
-            background-color: rgba(196, 148, 58, 0.45);
-        }
-
-        .workstyle-resident {
-            background-color: rgba(138, 196, 58, 0.45);
-        }
-
-        .workstyle- {
-            background-color: rgba(130, 60, 168, 0.45);
-        }
-
-        .text-small {
-            font-size: smaller;
-        }
-
-        #followTooltip {
-            position: absolute;
-            display: block;
-            pointer-events: none;
-        }
-    </style>
+    @foreach (var item in Model)
+    {
+        <link href="@Url.Content("~/Content/css/map.css")" rel="stylesheet" />
+        <style>
+            .workstyle-@item.Name.ToLower().Replace(" ","-") {
+                background-color: rgba(@item.Color.R.ToString(), @item.Color.G.ToString(), @item.Color.B.ToString(), 0.4);
+            }
+        </style>
+    }
 }
