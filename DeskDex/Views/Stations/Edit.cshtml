@@ -75,6 +75,13 @@
             @Html.ValidationMessageFor(model => model.Station.y2, "", new { @class = "text-danger" })
         </div>
 
+        <div class="col-md-12">
+            <label>Position</label>
+            <div id="mapContainer">
+                <img src="@(Url.Content("~/Content/img/svg/loading.svg"))" alt="Floor Map" id="mapImage" />
+            </div>
+        </div>
+
         <div class="form-group col-md-4">
             @Html.LabelFor(model => model.selectedWorkStyle, "Type")
             <div>@Html.DropDownListFor(model => model.selectedWorkStyle, Model.AllWorkStyles, new { @class = "form-control" })</div>
@@ -99,5 +106,57 @@
 </div>
 
 @section Scripts {
+    <script src="@Url.Content("~/Content/js/jquery.Jcrop.min.js")"></script>
+    <script src="@Url.Content("~/Content/js/jquery.color.js")"></script>
     @Scripts.Render("~/bundles/jqueryval")
+    <script>
+        let floorSelect;
+        $(document).ready(function () {
+            floorSelect = $("#Station_Floor");
+            console.log(floorSelect.val());
+            if (floorSelect.val() != "") {
+                loadMap(floorSelect.val());
+            }
+
+            floorSelect.on("change", function () {
+                loadMap($(this).val());
+            });
+        });
+
+        function setCoords(c) {
+            //console.log(c);
+            var map = $("#mapContainer").children("img");
+            xs = map.width();
+            ys = map.height();
+            var x1 = c.x / xs;
+            var x2 = c.x2 / xs;
+            var y1 = c.y / ys;
+            var y2 = c.y2 / ys;
+            $("#Station_x1").val(x1);
+            $("#Station_x2").val(x2);
+            $("#Station_y1").val(y1);
+            $("#Station_y2").val(y2);
+        }
+
+        function loadMap(floor) {
+            // load background svg
+            console.log("loading floor " + floor);
+            var mapContainer = $("#mapContainer");
+            mapContainer.empty();
+            var image = $(document.createElement('img'));
+            image.attr('src', '@(Url.Content("~/Content/img/svg/floor"))' + floor + '.svg');
+            image.removeAttr("style");
+            image.attr("width", "100%");
+            mapContainer.append(image);
+            image.Jcrop({
+                onChange: setCoords,
+                onSelect: setCoords,
+                bgColor: 'white'
+            });
+        }
+    </script>
+}
+
+@section Styles {
+    <link href="@Url.Content("~/Content/css/jquery.Jcrop.min.css")" rel="stylesheet" />
 }
