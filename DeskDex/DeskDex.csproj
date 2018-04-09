@@ -207,6 +207,8 @@
     <Content Include="Content\img\overlays\09.png" />
     <Content Include="Content\img\svg\arrow_left.svg" />
     <Content Include="Content\img\svg\arrow_right.svg" />
+    <Content Include="Content\img\svg\floor1.svg" />
+    <Content Include="Content\img\svg\loading.svg" />
     <Content Include="Content\js\bootstrap.js" />
     <Content Include="Content\js\bootstrap.min.js" />
     <Content Include="Content\js\jquery-3.2.1.min.js" />
@@ -282,6 +284,7 @@
     <Content Include="Content\scss\free\_tables.scss" />
     <Content Include="Content\scss\mdb.scss" />
     <Content Include="Content\scss\_custom.scss" />
+    <None Include="Properties\PublishProfiles\DeskDex - Web Deploy.pubxml" />
     <None Include="Scripts\jquery-3.3.1.intellisense.js" />
     <Content Include="Scripts\jquery-3.3.1.js" />
     <Content Include="Scripts\jquery-3.3.1.min.js" />
