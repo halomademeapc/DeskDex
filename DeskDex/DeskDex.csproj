@@ -188,6 +188,9 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="App_Data\Checkins.mdf" />
+    <Content Include="App_Data\Checkins_log.ldf">
+      <DependentUpon>Checkins.mdf</DependentUpon>
+    </Content>
     <Content Include="Content\css\bootstrap.css" />
     <Content Include="Content\css\bootstrap.min.css" />
     <Content Include="Content\css\mdb.css" />
@@ -346,7 +349,9 @@
     <Content Include="Views\WorkStyles\Edit.cshtml" />
     <Content Include="Views\WorkStyles\Index.cshtml" />
   </ItemGroup>
-  <ItemGroup />
+  <ItemGroup>
+    <Folder Include="Uploaded\" />
+  </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
     <Content Include="Scripts\jquery-3.3.1.slim.min.map" />
