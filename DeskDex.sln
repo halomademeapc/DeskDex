@@ -5,6 +5,8 @@ VisualStudioVersion = 15.0.27428.2015
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DeskDex", "DeskDex\DeskDex.csproj", "{47DB4957-0FA8-46C9-9AE5-5A5B78E3F728}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DeskDexCore", "DeskDexCore\DeskDexCore.csproj", "{4CFE3CED-7C32-4DF2-A93F-3B288001A24C}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -15,6 +17,10 @@ Global
 		{47DB4957-0FA8-46C9-9AE5-5A5B78E3F728}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{47DB4957-0FA8-46C9-9AE5-5A5B78E3F728}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{47DB4957-0FA8-46C9-9AE5-5A5B78E3F728}.Release|Any CPU.Build.0 = Release|Any CPU
+		{4CFE3CED-7C32-4DF2-A93F-3B288001A24C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{4CFE3CED-7C32-4DF2-A93F-3B288001A24C}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{4CFE3CED-7C32-4DF2-A93F-3B288001A24C}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{4CFE3CED-7C32-4DF2-A93F-3B288001A24C}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
