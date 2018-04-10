@@ -188,8 +188,15 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="App_Data\Checkins.mdf" />
+    <Content Include="App_Data\Checkins_log.ldf">
+      <DependentUpon>Checkins.mdf</DependentUpon>
+    </Content>
     <Content Include="Content\css\bootstrap.css" />
     <Content Include="Content\css\bootstrap.min.css" />
+    <Content Include="Content\css\Jcrop.gif" />
+    <Content Include="Content\css\jquery.Jcrop.css" />
+    <Content Include="Content\css\jquery.Jcrop.min.css" />
+    <Content Include="Content\css\map.css" />
     <Content Include="Content\css\mdb.css" />
     <Content Include="Content\css\mdb.min.css" />
     <Content Include="Content\css\style.css" />
@@ -207,12 +214,22 @@
     <Content Include="Content\img\overlays\09.png" />
     <Content Include="Content\img\svg\arrow_left.svg" />
     <Content Include="Content\img\svg\arrow_right.svg" />
+    <Content Include="Content\img\svg\floor1.svg" />
+    <Content Include="Content\img\svg\loading.svg" />
     <Content Include="Content\js\bootstrap.js" />
     <Content Include="Content\js\bootstrap.min.js" />
     <Content Include="Content\js\jquery-3.2.1.min.js" />
+    <Content Include="Content\js\jquery.color.js" />
+    <Content Include="Content\js\jquery.Jcrop.js" />
+    <Content Include="Content\js\jquery.Jcrop.min.js" />
+    <Content Include="Content\js\jquery.zoomooz.js" />
+    <Content Include="Content\js\jquery.zoomooz.min.js" />
+    <Content Include="Content\js\jscolor.js" />
+    <Content Include="Content\js\jscolor.min.js" />
     <Content Include="Content\js\mdb.js" />
     <Content Include="Content\js\mdb.min.js" />
     <Content Include="Content\js\popper.min.js" />
+    <Content Include="Content\js\select.js" />
     <Content Include="favicon.ico" />
     <Content Include="Global.asax" />
     <Content Include="ApplicationInsights.config">
@@ -282,6 +299,8 @@
     <Content Include="Content\scss\free\_tables.scss" />
     <Content Include="Content\scss\mdb.scss" />
     <Content Include="Content\scss\_custom.scss" />
+    <Content Include="Content\js\zoomooz.jquery.json" />
+    <None Include="Properties\PublishProfiles\DeskDex - Web Deploy.pubxml" />
     <None Include="Scripts\jquery-3.3.1.intellisense.js" />
     <Content Include="Scripts\jquery-3.3.1.js" />
     <Content Include="Scripts\jquery-3.3.1.min.js" />
@@ -343,7 +362,9 @@
     <Content Include="Views\WorkStyles\Edit.cshtml" />
     <Content Include="Views\WorkStyles\Index.cshtml" />
   </ItemGroup>
-  <ItemGroup />
+  <ItemGroup>
+    <Folder Include="Uploaded\" />
+  </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
     <Content Include="Scripts\jquery-3.3.1.slim.min.map" />

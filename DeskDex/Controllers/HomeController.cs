@@ -1,4 +1,5 @@
-﻿using System;
+﻿using DeskDex.Models;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Web;
@@ -8,6 +9,8 @@ namespace DeskDex.Controllers
 {
     public class HomeController : Controller
     {
+        private DeskContext db = new DeskContext();
+
         public ActionResult Index()
         {
             return View();
@@ -19,7 +22,7 @@ namespace DeskDex.Controllers
             {
                 ViewBag.DefaultFloor = Request.Cookies["mapFloor"].Value.ToString();
             }
-            return View();
+            return View(db.WorkStyles.ToList());
         }
     }
 }

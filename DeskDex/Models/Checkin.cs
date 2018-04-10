@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using System.Drawing;
 using System.Linq;
 using System.Net.NetworkInformation;
 using System.Web;
@@ -75,6 +76,37 @@ namespace DeskDex.Models
         public int ID { get; set; }
         [Required]
         public string Name { get; set; }
+
+        [Required]
+        public Int32 Argb
+        {
+            get
+            {
+                return Color.ToArgb();
+            }
+            set
+            {
+                Color = Color.FromArgb(value);
+            }
+        }
+
+        [NotMapped]
+        public Color Color { get; set; }
+
+        [NotMapped]
+        [Display(Name = "Color on Map")]
+        public string HexColor
+        {
+            get
+            {
+                return "#" + Color.R.ToString("X2") + Color.G.ToString("X2") + Color.B.ToString("X2");
+            }
+            set
+            {
+                int argb = Int32.Parse(value.Replace("#", ""), System.Globalization.NumberStyles.HexNumber);
+                Color = Color.FromArgb(argb);
+            }
+        }
     }
 
     public class Equipment

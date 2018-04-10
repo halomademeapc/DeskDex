@@ -46,7 +46,7 @@ namespace DeskDex.Controllers
         // more details see https://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Create([Bind(Include = "ID,Name")] WorkStyle workStyle)
+        public ActionResult Create(WorkStyle workStyle)
         {
             if (ModelState.IsValid)
             {
@@ -78,7 +78,7 @@ namespace DeskDex.Controllers
         // more details see https://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Edit([Bind(Include = "ID,Name")] WorkStyle workStyle)
+        public ActionResult Edit(WorkStyle workStyle)
         {
             if (ModelState.IsValid)
             {
