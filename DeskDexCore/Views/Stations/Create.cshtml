@@ -1,0 +1,158 @@
+﻿@model DeskDexCore.Models.StationViewModel
+
+@{
+    ViewBag.Title = "Create";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div class="container mt-4">
+    <h2>Create new Station</h2>
+
+    <nav class="breadcrumb my-3">
+        @Html.ActionLink("DeskDex", "Index", "Home", null, new { @class = "breadcrumb-item" })
+        <span class="breadcrumb-item">Management</span>
+        @Html.ActionLink("Stations", "Index", "Stations", null, new { @class = "breadcrumb-item" })
+        <span class="breadcrumb-item active">Create</span>
+    </nav>
+
+    <div class="py-1"></div>
+
+    @using (Html.BeginForm("Create", "Stations", FormMethod.Post, new { enctype = "multipart/form-data" }))
+    {
+        @Html.AntiForgeryToken()
+
+        <div class="md-form form-group col-md-4">
+            @Html.EditorFor(model => model.Station.PhysicalAddress, new { htmlAttributes = new { @class = "form-control" } })
+            @Html.LabelFor(model => model.Station.PhysicalAddress)
+            @Html.ValidationMessageFor(model => model.Station.PhysicalAddress, "", new { @class = "text-danger" })
+        </div>
+
+        <div class="md-form form-group col-md-4">
+            @Html.EditorFor(model => model.Station.Location, new { htmlAttributes = new { @class = "form-control" } })
+            @Html.LabelFor(model => model.Station.Location)
+            @Html.ValidationMessageFor(model => model.Station.Location, "", new { @class = "text-danger" })
+
+        </div>
+
+        <div class="md-form form-group col-md-4">
+            @Html.EditorFor(model => model.Station.Floor, new { htmlAttributes = new { @class = "form-control" } })
+            @Html.LabelFor(model => model.Station.Floor)
+            @Html.ValidationMessageFor(model => model.Station.Floor, "", new { @class = "text-danger" })
+
+        </div>
+
+        <div class="md-form form-group col-md-4">
+            @Html.EditorFor(model => model.Station.Capacity, new { htmlAttributes = new { @class = "form-control" } })
+            @Html.LabelFor(model => model.Station.Capacity)
+            @Html.ValidationMessageFor(model => model.Station.Capacity, "", new { @class = "text-danger" })
+        </div>
+
+        <div class="md-form form-group col-md-4 d-none">
+            @Html.EditorFor(model => model.Station.x1, new { htmlAttributes = new { @class = "form-control" } })
+            @Html.LabelFor(model => model.Station.x1)
+            @Html.ValidationMessageFor(model => model.Station.x1, "", new { @class = "text-danger" })
+        </div>
+
+        <div class="md-form form-group col-md-4 d-none">
+            @Html.EditorFor(model => model.Station.y1, new { htmlAttributes = new { @class = "form-control" } })
+            @Html.LabelFor(model => model.Station.y1)
+            @Html.ValidationMessageFor(model => model.Station.y1, "", new { @class = "text-danger" })
+        </div>
+
+        <div class="md-form form-group col-md-4 d-none">
+            @Html.EditorFor(model => model.Station.x2, new { htmlAttributes = new { @class = "form-control" } })
+            @Html.LabelFor(model => model.Station.x2)
+            @Html.ValidationMessageFor(model => model.Station.x2, "", new { @class = "text-danger" })
+        </div>
+
+        <div class="md-form form-group col-md-4 d-none">
+            @Html.EditorFor(model => model.Station.y2, new { htmlAttributes = new { @class = "form-control" } })
+            @Html.LabelFor(model => model.Station.y2)
+            @Html.ValidationMessageFor(model => model.Station.y2, "", new { @class = "text-danger" })
+        </div>
+
+        <div class="col-md-12">
+            <label>Position</label>
+            <div id="mapContainer">
+                <img src="@(Url.Content("~/img/svg/loading.svg"))" alt="Floor Map" id="mapImage" />
+            </div>
+        </div>
+
+        <div class="form-group col-md-4">
+            @Html.LabelFor(model => model.selectedWorkStyle, "Type")
+            <div>@Html.DropDownListFor(model => model.selectedWorkStyle, Model.AllWorkStyles, new { @class = "form-control" })</div>
+        </div>
+
+        <div class="form-group col-md-4">
+            @Html.LabelFor(model => model.AllEquipment, "Equipment")
+            <div>@Html.ListBoxFor(m => m.SelectedEquipment, Model.AllEquipment, new { @class = "form-control" })</div>
+        </div>
+
+        <div class="form-group col-md-4">
+            @Html.LabelFor(model => model.File)
+            <div>@Html.TextBoxFor(model => model.File, new { type = "file", accept = "image/*", @class = "form-control-file" })</div>
+            @Html.ValidationMessageFor(model => model.File, "", new { @class = "text-danger" })
+        </div>
+
+        <div class="md-form form-group col-md-4">
+            <input type="submit" value="Create" class="btn btn-primary" />
+        </div>
+    }
+
+    @section Scripts {
+        <script src="@Url.Content("~/js/jquery.Jcrop.min.js")"></script>
+        <script src="@Url.Content("~/js/jquery.color.js")"></script>
+        @Scripts.Render("~/bundles/jqueryval")
+        <script>
+let floorSelect;
+$(document).ready(function () {
+    floorSelect = $("#Station_Floor");
+    console.log(floorSelect.val());
+    if (floorSelect.val() != "") {
+        loadMap(floorSelect.val());
+    }
+
+    floorSelect.on("change", function () {
+        loadMap($(this).val());
+    });
+});
+
+function setCoords(c) {
+    //console.log(c);
+    var map = $("#mapContainer").children("img");
+    xs = map.width();
+    ys = map.height();
+    var x1 = c.x / xs;
+    var x2 = c.x2 / xs;
+    var y1 = c.y / ys;
+    var y2 = c.y2 / ys;
+    $("#Station_x1").val(x1);
+    $("#Station_x2").val(x2);
+    $("#Station_y1").val(y1);
+    $("#Station_y2").val(y2);
+}
+
+function loadMap(floor) {
+    // load background svg
+    console.log("loading floor " + floor);
+    var mapContainer = $("#mapContainer");
+    mapContainer.empty();
+    var image = $(document.createElement('img'));
+    image.attr('src', '@(Url.Content("~/img/svg/floor"))' + floor + '.svg');
+    image.removeAttr("style");
+    image.attr("width", "100%");
+    mapContainer.append(image);
+    image.Jcrop({
+    onChange: setCoords,
+    onSelect: setCoords,
+    bgColor: 'white',
+    setSelect: [image.width() * parseFloat($("#Station_x1").val()), image.height() * parseFloat($("#Station_y1").val()), image.width() * parseFloat($("#Station_x2").val()), image.height() * parseFloat($("#Station_y2").val())],
+    });
+    }
+        </script>
+
+    }
+
+    @section Styles {
+        <link href="@Url.Content("~/css/jquery.Jcrop.min.css")" rel="stylesheet" />
+    }
