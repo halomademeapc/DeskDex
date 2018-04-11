@@ -33,7 +33,7 @@ namespace DeskDexCore.Controllers
 
             if (floor != null)
             {
-                Stations = db.Stations.Where(s => s.Floor == floor).Include(s => s.Type).Include(s => s.LastCheckin).ToList();
+                Stations = db.Stations.Where(s => s.Floor.ID == floor).Include(s => s.Type).Include(s => s.LastCheckin).ToList();
             }
             else
             {
