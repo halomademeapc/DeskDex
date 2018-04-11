@@ -16,7 +16,7 @@
 
                 </div>
                 <!-- map -->
-                <img src="@(Url.Content("~/img/svg/loading.svg"))" alt="Floor Map" id="mapImage" />
+                <img src="@(Url.Content("~/images/svg/loading.svg"))" alt="Floor Map" id="mapImage" />
             </div>
         </div>
     </div>
@@ -138,7 +138,7 @@
             });
 
             // load background svg
-            $("#mapImage").attr('src', '@(Url.Content("~/img/svg/floor"))' + floor + '.svg');
+            $("#mapImage").attr('src', '@(Url.Content("~/images/svg/floor"))' + floor + '.svg');
         }
 
         function createStation(stationViewModel) {

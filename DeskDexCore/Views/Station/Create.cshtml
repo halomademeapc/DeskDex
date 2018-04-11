@@ -11,7 +11,7 @@
     <nav class="breadcrumb my-3">
         @Html.ActionLink("DeskDex", "Index", "Home", null, new { @class = "breadcrumb-item" })
         <span class="breadcrumb-item">Management</span>
-        @Html.ActionLink("Station", "Index", "Station", null, new { @class = "breadcrumb-item" })
+        @Html.ActionLink("Stations", "Index", "Station", null, new { @class = "breadcrumb-item" })
         <span class="breadcrumb-item active">Create</span>
     </nav>
 
@@ -138,7 +138,7 @@ function loadMap(floor) {
     var mapContainer = $("#mapContainer");
     mapContainer.empty();
     var image = $(document.createElement('img'));
-    image.attr('src', '@(Url.Content("~/img/svg/floor"))' + floor + '.svg');
+    image.attr('src', '@(Url.Content("~/images/svg/floor"))' + floor + '.svg');
     image.removeAttr("style");
     image.attr("width", "100%");
     mapContainer.append(image);

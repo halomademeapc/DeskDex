@@ -10,25 +10,30 @@ using DeskDexCore.Models;
 namespace DeskDexCore.Controllers
 {
     [Authorize]
+    [Route("")]
     public class HomeController : Controller
     {
+        private DeskContext db;
+
+        public HomeController(DeskContext context)
+        {
+            db = context;
+        }
+
+        [HttpGet("")]
         public IActionResult Index()
         {
             return View();
         }
 
-        public IActionResult About()
+        [HttpGet("Map")]
+        public IActionResult Map()
         {
-            ViewData["Message"] = "Your application description page.";
-
-            return View();
-        }
-
-        public IActionResult Contact()
-        {
-            ViewData["Message"] = "Your contact page.";
-
-            return View();
+            if (Request.Cookies["mapFloor"] != null)
+            {
+                ViewBag.DefaultFloor = Request.Cookies["mapFloor"].ToString();
+            }
+            return View(db.WorkStyles.ToList());
         }
 
         [AllowAnonymous]
