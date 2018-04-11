@@ -35,7 +35,5 @@ namespace DeskDexCore.Models
                 .WithMany(c => c.StationEquipments)
                 .HasForeignKey(se => se.EquipmentId);
         }
-
-        protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder) => optionsBuilder.UseLazyLoadingProxies();
     }
 }
