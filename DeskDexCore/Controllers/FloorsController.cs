@@ -53,7 +53,7 @@ namespace DeskDexCore.Controllers
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("ID,Name,FilePath,SortName")] Floor floor)
+        public async Task<IActionResult> Create(Floor floor)
         {
             if (ModelState.IsValid)
             {
@@ -77,7 +77,7 @@ namespace DeskDexCore.Controllers
             {
                 return NotFound();
             }
-            return View(floor);
+            return View(new FloorViewModel { Floor = floor });
         }
 
         // POST: Floors/Edit/5
@@ -85,34 +85,27 @@ namespace DeskDexCore.Controllers
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("ID,Name,FilePath,SortName")] Floor floor)
+        public async Task<IActionResult> Edit(int id, FloorViewModel fvm)
         {
-            if (id != floor.ID)
+            if (id != fvm.Floor.ID)
             {
                 return NotFound();
             }
 
             if (ModelState.IsValid)
             {
-                try
-                {
-                    _context.Update(floor);
-                    await _context.SaveChangesAsync();
-                }
-                catch (DbUpdateConcurrencyException)
-                {
-                    if (!FloorExists(floor.ID))
-                    {
-                        return NotFound();
-                    }
-                    else
-                    {
-                        throw;
-                    }
-                }
+                // get old entry
+
+                // update values
+
+                // store file
+
+                // commit changes
+
+
                 return RedirectToAction(nameof(Index));
             }
-            return View(floor);
+            return View(fvm);
         }
 
         // GET: Floors/Delete/5
