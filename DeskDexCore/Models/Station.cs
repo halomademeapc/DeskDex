@@ -9,11 +9,6 @@ namespace DeskDexCore.Models
 {
     public class Station
     {
-        public Station()
-        {
-            this.Equipment = new HashSet<Equipment>();
-        }
-
         [Key, DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public int ID { get; set; }
 
@@ -24,7 +19,8 @@ namespace DeskDexCore.Models
         public string Location { get; set; }
 
         [Display(Name = "Available Equipment")]
-        public virtual ICollection<Equipment> Equipment { get; set; }
+        public virtual ICollection<StationEquipment> StationEquipments { get; set; }
+        //public virtual ICollection<Equipment> Equipment { get; set; }
 
         public virtual Checkin LastCheckin { get; set; }
 
@@ -54,5 +50,13 @@ namespace DeskDexCore.Models
 
         [Display(Name = "Picture")]
         public string FilePath { get; set; }
+    }
+
+    public class StationEquipment
+    {
+        public int StationId { get; set; }
+        public Station Station { get; set; }
+        public int EquipmentId { get; set; }
+        public Equipment Equipment { get; set; }
     }
 }

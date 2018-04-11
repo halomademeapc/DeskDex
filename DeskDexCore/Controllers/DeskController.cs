@@ -13,7 +13,12 @@ namespace DeskDexCore.Controllers
     [AllowAnonymous]
     public class DeskController : Controller
     {
-        private DeskContext db = new DeskContext();
+        private DeskContext db;
+
+        public DeskController(DeskContext context)
+        {
+            db = context;
+        }
 
         // GET: api/Desk
         [Route("api/map/{floor}")]
@@ -73,7 +78,7 @@ namespace DeskDexCore.Controllers
                     Location = station.Location,
                     ImagePath = station.FilePath
                 };
-                foreach (var equip in station.Equipment)
+                foreach (var equip in db.Stations.Where(s => s.ID == id).SelectMany(e => e.StationEquipments).Select(se => se.Equipment))
                 {
                     ddvm.Equipment.Add(equip.Name);
                 }

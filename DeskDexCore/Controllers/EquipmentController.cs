@@ -12,7 +12,12 @@ namespace DeskDexCore.Controllers
 {
     public class EquipmentController : Controller
     {
-        private DeskContext db = new DeskContext();
+        private DeskContext db;
+
+        public EquipmentController(DeskContext context)
+        {
+            db = context;
+        }
 
         // GET: Equipments
         public ActionResult Index()
