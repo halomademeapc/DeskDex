@@ -223,11 +223,11 @@ namespace DeskDexCore.Controllers
                 }
 
                 //oldEntry.Equipment = db.Equipment.Where(o => stationViewModel.SelectedEquipment.Contains(o.ID)).ToList();
-                station.StationEquipments = new List<StationEquipment>();
+                oldEntry.StationEquipments = new List<StationEquipment>();
 
                 foreach (var equip in stationViewModel.SelectedEquipment)
                 {
-                    station.StationEquipments.Add(new StationEquipment
+                    oldEntry.StationEquipments.Add(new StationEquipment
                     {
                         StationId = station.ID,
                         EquipmentId = equip

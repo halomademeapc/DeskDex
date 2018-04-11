@@ -84,9 +84,9 @@
                 <dd>
                     @try
                     {
-                        @foreach (var equip in Model.StationEquipments.Select(se => se.Equipment.Name))
+                        @foreach (var equip in Model.StationEquipments)
                         {
-                            <div>@equip</div>
+                            <div>@equip.Equipment.Name</div>
                         }
 
                     }
