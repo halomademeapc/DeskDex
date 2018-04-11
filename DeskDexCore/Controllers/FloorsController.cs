@@ -58,15 +58,44 @@ namespace DeskDexCore.Controllers
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create(Floor floor)
+        public async Task<IActionResult> Create(FloorViewModel fvm)
         {
             if (ModelState.IsValid)
             {
-                _context.Add(floor);
-                await _context.SaveChangesAsync();
+                // store file
+                try
+                {
+                    if (fvm.File.Length > 0)
+                    {
+                        if (Path.GetExtension(fvm.File.FileName).ToLower() == ".svg")
+                        {
+                            // get file name
+                            string _FileName = $@"{Guid.NewGuid()}.svg";
+                            string _Path = Path.Combine(_hostingEnvironment.WebRootPath, "Floors", _FileName);
+
+                            using (var stream = new FileStream(_Path, FileMode.Create))
+                            {
+                                await fvm.File.CopyToAsync(stream);
+                                fvm.Floor.FilePath = "/Floors/" + _FileName;
+                            }
+                        }
+                        else
+                        {
+                            ViewBag.Message("Invalid file uploaded. Please select an SVG file.");
+                        }
+                    }
+                }
+                catch (Exception e)
+                {
+                    ViewBag.Message("Unable to upload file.");
+                }
+
+                // commit changes
+                _context.Floors.Add(fvm.Floor);
+
                 return RedirectToAction(nameof(Index));
             }
-            return View(floor);
+            return View(fvm);
         }
 
         // GET: Floors/Edit/5
