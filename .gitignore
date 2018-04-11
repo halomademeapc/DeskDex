@@ -260,3 +260,5 @@ paket-files/
 __pycache__/
 *.pyc
 DeskDex/uploaded/
+
+DeskDexCore/wwwroot/Uploaded/
