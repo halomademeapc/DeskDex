@@ -1,0 +1,42 @@
+﻿@model IEnumerable<DeskDexCore.Models.Equipment>
+
+@{
+    ViewBag.Title = "Index";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+<div class="container mt-4">
+    <h2 class="float-sm-left">Equipment</h2>
+
+    <div class="float-sm-right btn-group" role="group">
+        <a href="@Url.Action("Create")" class="btn btn-primary"><i class="fas fa-plus mr-1"></i> Create New</a>
+    </div>
+    <div class="clearfix"></div>
+
+    <nav class="breadcrumb my-3">
+        @Html.ActionLink("DeskDex", "Index", "Home", null, new { @class = "breadcrumb-item" })
+        <span class="breadcrumb-item">Management</span>
+        <span class="breadcrumb-item active">Equipment</span>
+    </nav>
+
+    <div class="card-columns">
+
+
+        @foreach (var item in Model)
+        {
+            <div class="card mx-2 my-2">
+                <div class="card-body">
+                    <h4 class="card-title">
+                        @Html.DisplayFor(modelItem => item.Name)
+                    </h4>
+                    <p class="card-text">
+                        @Html.DisplayFor(modelItem => item.Description)
+                    </p>
+                    <div class="text-right">
+                        @Html.ActionLink("Delete", "Delete", new { id = item.ID }, new { @class = "btn btn-outline-danger waves-effect btn-sm" })
+                        @Html.ActionLink("Edit", "Edit", new { id = item.ID }, new { @class = "btn btn-primary btn-sm" })
+                    </div>
+                </div>
+            </div>
+        }
+    </div>
+</div>

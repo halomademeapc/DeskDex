@@ -1,0 +1,64 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <title>@ViewBag.Title - DeskDex</title>
+    <script defer src="https://use.fontawesome.com/releases/v5.0.9/js/all.js" integrity="sha384-8iPTk2s/jMVj81dnzb/iFR2sdA7u06vHJyyLlAd4snFpCl/SnyUjRrbdJsw1pGIl" crossorigin="anonymous"></script>
+    <link href="@Url.Content("~/css/bootstrap.min.css")" rel="stylesheet">
+    <link href="@Url.Content("~/css/mdb.min.css")" rel="stylesheet">
+    <link href="@Url.Content("~/css/style.css")" rel="stylesheet" />
+    @RenderSection("Styles", required: false)
+</head>
+<body>
+    <nav class="navbar navbar-expand-lg navbar-dark red darken-4 @(ViewBag.Fullscreen == true ? "fixed-top" : "")">
+        <div class="container">
+            <a class="navbar-brand" href="@Url.Action("Index", "Home")">Desk<strong>Dex</strong></a>
+
+            <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#ddNavCollapse" aria-controls="ddNavCollapse"
+                    aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+
+            <div class="collapse navbar-collapse" id="ddNavCollapse">
+                <!-- links -->
+                <ul class="navbar-nav mr-auto">
+                    <li class="nav-item @(ViewBag.Active == "home" ? "active" : "")">
+                        <a href="@Url.Action("Index","Home")" class="nav-link">Home</a>
+                    </li>
+                    <li class="nav-item @(ViewBag.Active == "map" ? "active" : "")">
+                        <a href="@Url.Action("Map","Home")" class="nav-link">Map</a>
+                    </li>
+                    <li class="nav-item dropdown @(ViewBag.Active == "management" ? "active" : "")">
+                        <a class="nav-link dropdown-toggle" id="mgmtDdLink" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"Management>Management</a>
+                        <div class="dropdown-menu dropdown-primary" aria-labelledby="mgmtDdLink">
+                            <a href="@Url.Action("Index","Station")" class="dropdown-item">Stations</a>
+                            <a href="@Url.Action("Index","Equipment")" class="dropdown-item">Equipment</a>
+                            <a href="@Url.Action("Index","WorkStyles")" class="dropdown-item">Station Types</a>
+                        </div>
+                    </li>
+                </ul>
+
+                <!-- search -->
+                <form class="form-inline">
+                    <div class="md-form mt-0">
+                        <input type="text" class="form-control mr-sm-2" placeholder="Find Someone" id="userSearch" aria-label="Search" />
+                    </div>
+                </form>
+            </div>
+        </div>
+    </nav>
+
+    <div class="body-content">
+        @RenderBody()
+    </div>
+
+
+    <script src="@Url.Content("~/js/jquery-3.2.1.min.js")"></script>
+    <script src="@Url.Content("~/js/popper.min.js")"></script>
+    <script src="@Url.Content("~/js/bootstrap.min.js")"></script>
+    <script src="@Url.Content("~/js/mdb.min.js")"></script>
+    @RenderSection("scripts", required: false)
+</body>
+</html>

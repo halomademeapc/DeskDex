@@ -229,7 +229,6 @@
     <Content Include="Content\js\mdb.js" />
     <Content Include="Content\js\mdb.min.js" />
     <Content Include="Content\js\popper.min.js" />
-    <Content Include="Content\js\select.js" />
     <Content Include="favicon.ico" />
     <Content Include="Global.asax" />
     <Content Include="ApplicationInsights.config">
