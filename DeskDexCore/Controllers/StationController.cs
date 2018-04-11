@@ -1,6 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Data.SqlClient;
+using System.Drawing;
+using System.Drawing.Drawing2D;
+using System.Drawing.Imaging;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
@@ -81,7 +84,18 @@ namespace DeskDexCore.Controllers
                 var station = stationViewModel.Station;
 
                 // update model
-                station.Equipment = db.Equipment.Where(o => stationViewModel.SelectedEquipment.Contains(o.ID)).ToList();
+                //station.Equipment = db.Equipment.Where(o => stationViewModel.SelectedEquipment.Contains(o.ID)).ToList();
+                station.StationEquipments = new List<StationEquipment>();
+                
+                foreach(var equip in stationViewModel.SelectedEquipment)
+                {
+                    station.StationEquipments.Add(new StationEquipment
+                    {
+                        StationId = station.ID,
+                        EquipmentId = equip
+                    });
+                }
+
                 station.Type = db.WorkStyles.Find(stationViewModel.selectedWorkStyle);
 
                 // handle image
@@ -195,7 +209,18 @@ namespace DeskDexCore.Controllers
                     oldEntry.FilePath = ogImage;
                 }
 
-                oldEntry.Equipment = db.Equipment.Where(o => stationViewModel.SelectedEquipment.Contains(o.ID)).ToList();
+                //oldEntry.Equipment = db.Equipment.Where(o => stationViewModel.SelectedEquipment.Contains(o.ID)).ToList();
+                station.StationEquipments = new List<StationEquipment>();
+
+                foreach (var equip in stationViewModel.SelectedEquipment)
+                {
+                    station.StationEquipments.Add(new StationEquipment
+                    {
+                        StationId = station.ID,
+                        EquipmentId = equip
+                    });
+                }
+
                 oldEntry.Type = db.WorkStyles.Find(stationViewModel.selectedWorkStyle);
 
                 db.SaveChanges();
