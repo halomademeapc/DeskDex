@@ -31,11 +31,12 @@
                         <a href="@Url.Action("Map","Home")" class="nav-link">Map</a>
                     </li>
                     <li class="nav-item dropdown @(ViewBag.Active == "management" ? "active" : "")">
-                        <a class="nav-link dropdown-toggle" id="mgmtDdLink" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"Management>Management</a>
+                        <a class="nav-link dropdown-toggle" id="mgmtDdLink" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" Management>Management</a>
                         <div class="dropdown-menu dropdown-primary" aria-labelledby="mgmtDdLink">
-                            <a href="@Url.Action("Index","Station")" class="dropdown-item">Stations</a>
-                            <a href="@Url.Action("Index","Equipment")" class="dropdown-item">Equipment</a>
-                            <a href="@Url.Action("Index","WorkStyles")" class="dropdown-item">Station Types</a>
+                            @Html.ActionLink("Stations", "Index", "Station", null, new { @class="dropdown-item"})
+                            @Html.ActionLink("Equipment", "Index", "Equipment", null, new { @class="dropdown-item"})
+                            @Html.ActionLink("Station Types", "Index", "WorkStyles", null, new { @class="dropdown-item"})
+                            @Html.ActionLink("Floors", "Index", "Floors", null, new { @class = "dropdown-item" })
                         </div>
                     </li>
                 </ul>
