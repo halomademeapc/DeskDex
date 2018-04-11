@@ -87,7 +87,7 @@
     <script>
         var defaultFloor = @(ViewBag.DefaultFloor != null ? ViewBag.DefaultFloor : 1);
         $(document).ready(function () {
-            //console.log("let's do this!");
+            console.log("let's do this!");
             loadMap(defaultFloor);
 
             $("#floorSelect").on("change", function () {
@@ -129,10 +129,10 @@
 
             // call API to get desk locations on this floor
             $.getJSON('/api/map/' + floor, function (data) {
-                //console.log(data);
+                console.log(data);
                 for (var i = 0; i < data.length; i++) {
                     var thisStation = createStation(data[i]);
-                    //console.log(thisStation);
+                    console.log(thisStation);
                     olDiv.append(thisStation);
                 }
             });
@@ -145,16 +145,16 @@
             var stationDiv = $(document.createElement('div'));
             var size = [(stationViewModel.x2 - stationViewModel.x1)*100, (stationViewModel.y2 - stationViewModel.y1)*100];
             stationDiv.addClass("stationDiv");
-            stationDiv.addClass(("workstyle-" + stationViewModel.WorkStyle).toLowerCase().replace(" ", "-"));
+            stationDiv.addClass(("workstyle-" + stationViewModel.workStyle).toLowerCase().replace(" ", "-"));
             stationDiv.css("width", size[0] + "%");
             stationDiv.css("height", size[1] + "%");
             stationDiv.css("left", (stationViewModel.x1*100) + "%");
             stationDiv.css("top", (stationViewModel.y1 * 100) + "%");
             stationDiv.data("targetsize", .5);
-            stationDiv.data("stationID", stationViewModel.DeskID);
+            stationDiv.data("stationID", stationViewModel.deskID);
 
             $(stationDiv).on("click", function (event) {
-                //console.log("station clicked");
+                console.log("station clicked");
                 $("#followTooltip").fadeOut(200);
                 $(this).zoomTarget();
                 checkDetailStatus();
@@ -174,7 +174,7 @@
 
         function checkDetailStatus() {
             setTimeout(function () {
-                //console.log("cds called");
+                console.log("cds called");
                 var tar = $(".stationDiv.selectedZoomTarget");
                 if (tar.length > 0) {
                     try {
@@ -183,7 +183,7 @@
                             $("#roomDetails").slideDown();
                         }
                     } catch (e) {
-                        //console.log(e);
+                        console.log(e);
                         $("#roomDetails").slideUp();
                     }
                 } else {
@@ -194,26 +194,26 @@
 
         function updateDetails(stationID) {
             $.getJSON('/api/Desk/' + stationID, function (data) {
-                //console.log("loaded details for station " + data.DeskID);
+                console.log("loaded details for station " + data.deskID);
 
-                $("#rdLocation").text(data.Location);
-                $("#rdType").text(data.WorkStyle);
-                $("#rdCapacity").text(data.Capacity);
-                if (data.LastUpdate != null && data.UserName != null) {
+                $("#rdLocation").text(data.location);
+                $("#rdType").text(data.workStyle);
+                $("#rdCapacity").text(data.capacity);
+                if (data.lastUpdate != null && data.userName != null) {
                     $("#rdCheckin").show();
-                    $("#rdPerson").text(data.UserName);
-                    $("#rdTime").text(data.LastUpdate);
+                    $("#rdPerson").text(data.userName);
+                    $("#rdTime").text(data.lastUpdate);
                 } else {
                     $("#rdCheckin").hide();
                 }
                 $("#rdEquipment").empty();
-                for (var i = 0; i < data.Equipment.length; i++) {
+                for (var i = 0; i < data.equipment.length; i++) {
                     var item = $(document.createElement('li'));
-                    item.text(data.Equipment[i]);
+                    item.text(data.equipment[i]);
                     $("#rdEquipment").append(item);
                 }
-                if (data.ImagePath != null) {
-                    $("#rdImage").attr('src', data.ImagePath);
+                if (data.imagePath != null) {
+                    $("#rdImage").attr('src', data.imagePath);
                     $("#rdImage").css("display", "block");
                 } else {
                     $("#rdImage").css("display", "none");

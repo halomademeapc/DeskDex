@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using DeskDexCore.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 
 // For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 
@@ -32,11 +33,11 @@ namespace DeskDexCore.Controllers
 
             if (floor != null)
             {
-                Stations = db.Stations.Where(s => s.Floor == floor).ToList();
+                Stations = db.Stations.Where(s => s.Floor == floor).Include(s => s.Type).Include(s => s.LastCheckin).ToList();
             }
             else
             {
-                Stations = db.Stations.ToList();
+                Stations = db.Stations.Include(s => s.Type).Include(s => s.LastCheckin).ToList();
             }
 
             foreach (var Station in Stations)
@@ -58,9 +59,10 @@ namespace DeskDexCore.Controllers
         }
 
         // GET: api/Desk/5
+        [Route("api/desk/{id}")]
         public DeskDetailApiModel GetStation(int id)
         {
-            Station station = db.Stations.Find(id);
+            Station station = db.Stations.Where(s => s.ID == id).Include(stat => stat.Type).Include(stat => stat.StationEquipments).ThenInclude(se => se.Equipment).Include(s => s.LastCheckin).First();
             if (station == null)
             {
                 return null;
