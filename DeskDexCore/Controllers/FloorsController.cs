@@ -92,6 +92,7 @@ namespace DeskDexCore.Controllers
 
                 // commit changes
                 _context.Floors.Add(fvm.Floor);
+                await _context.SaveChangesAsync();
 
                 return RedirectToAction(nameof(Index));
             }
