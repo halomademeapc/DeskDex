@@ -26,7 +26,14 @@ namespace DeskDexCore.Models
             {
                 if (_selectedEquipment == null)
                 {
-                    _selectedEquipment = Station.StationEquipments.Select(e => e.EquipmentId).ToList();
+                    try
+                    {
+                        _selectedEquipment = Station.StationEquipments.Select(e => e.EquipmentId).ToList();
+                    }
+                    catch (Exception e)
+                    {
+                        //
+                    }
                 }
                 return _selectedEquipment;
             }

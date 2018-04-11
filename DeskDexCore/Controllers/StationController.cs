@@ -8,6 +8,7 @@ using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 using DeskDexCore.Models;
+using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
@@ -19,10 +20,12 @@ namespace DeskDexCore.Controllers
     public class StationController : Controller
     {
         private DeskContext db;
+        private readonly IHostingEnvironment _hostingEnvironment;
 
-        public StationController(DeskContext context)
+        public StationController(DeskContext context, IHostingEnvironment hostingEnvironment)
         {
             db = context;
+            _hostingEnvironment = hostingEnvironment;
         }
 
         // GET: Stations
@@ -86,8 +89,8 @@ namespace DeskDexCore.Controllers
                 // update model
                 //station.Equipment = db.Equipment.Where(o => stationViewModel.SelectedEquipment.Contains(o.ID)).ToList();
                 station.StationEquipments = new List<StationEquipment>();
-                
-                foreach(var equip in stationViewModel.SelectedEquipment)
+
+                foreach (var equip in stationViewModel.SelectedEquipment)
                 {
                     station.StationEquipments.Add(new StationEquipment
                     {
@@ -101,20 +104,25 @@ namespace DeskDexCore.Controllers
                 // handle image
                 try
                 {
-                    if (stationViewModel.File.ContentLength > 0)
+                    if (stationViewModel.File.Length > 0)
                     {
                         // get file name
                         string _FileName = $@"{Guid.NewGuid()}.jpg";
-                        string _Path = Path.Combine(Server.MapPath("~/Uploaded"), _FileName);
+                        string _Path = Path.Combine(_hostingEnvironment.WebRootPath, "Uploaded", _FileName);
 
-                        // convert image
-                        Image scaled = Resize(Image.FromStream(stationViewModel.File.InputStream), 600, 600);
+                        using (var memoryStream = new MemoryStream())
+                        {
+                            stationViewModel.File.OpenReadStream().CopyTo(memoryStream);
+                            Image scaled = Resize(Image.FromStream(memoryStream), 600, 600);
 
-                        scaled.Save(_Path, ImageFormat.Jpeg);
+                            // convert image
+                            scaled.Save(_Path, ImageFormat.Jpeg);
 
-                        station.FilePath = "/Uploaded/" + _FileName;
+                            station.FilePath = "/Uploaded/" + _FileName;
 
-                        scaled.Dispose();
+                            scaled.Dispose();
+                        }
+
                     }
                 }
                 catch (Exception e)
@@ -186,20 +194,25 @@ namespace DeskDexCore.Controllers
                 // handle image
                 try
                 {
-                    if (stationViewModel.File.ContentLength > 0)
+                    if (stationViewModel.File.Length > 0)
                     {
                         // get file name
                         string _FileName = $@"{Guid.NewGuid()}.jpg";
-                        string _Path = Path.Combine(Server.MapPath("~/Uploaded"), _FileName);
+                        string _Path = Path.Combine(_hostingEnvironment.WebRootPath, "Uploaded", _FileName);
 
-                        // convert image
-                        Image scaled = Resize(Image.FromStream(stationViewModel.File.InputStream), 600, 600);
+                        using (var memoryStream = new MemoryStream())
+                        {
+                            stationViewModel.File.OpenReadStream().CopyTo(memoryStream);
+                            Image scaled = Resize(Image.FromStream(memoryStream), 600, 600);
 
-                        scaled.Save(_Path, ImageFormat.Jpeg);
+                            // convert image
+                            scaled.Save(_Path, ImageFormat.Jpeg);
 
-                        oldEntry.FilePath = "/Uploaded/" + _FileName;
+                            oldEntry.FilePath = "/Uploaded/" + _FileName;
 
-                        scaled.Dispose();
+                            scaled.Dispose();
+                        }
+
                     }
                 }
                 catch (Exception e)
