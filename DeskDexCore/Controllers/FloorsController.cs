@@ -6,16 +6,21 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using DeskDexCore.Models;
+using System.IO;
+using Microsoft.AspNetCore.Hosting;
 
 namespace DeskDexCore.Controllers
 {
     public class FloorsController : Controller
     {
         private readonly DeskContext _context;
+        private readonly IHostingEnvironment _hostingEnvironment;
 
-        public FloorsController(DeskContext context)
+
+        public FloorsController(DeskContext context, IHostingEnvironment hostingEnvironment)
         {
             _context = context;
+            _hostingEnvironment = hostingEnvironment;
         }
 
         // GET: Floors
@@ -95,13 +100,48 @@ namespace DeskDexCore.Controllers
             if (ModelState.IsValid)
             {
                 // get old entry
+                var oldEntry = _context.Floors.Find(fvm.Floor.ID);
+                var ogImage = oldEntry.FilePath;
 
                 // update values
+                _context.Entry(oldEntry).CurrentValues.SetValues(fvm.Floor);
 
                 // store file
+                try
+                {
+                    if (fvm.File.Length > 0)
+                    {
+                        if (Path.GetExtension(fvm.File.FileName).ToLower() == ".svg")
+                        {
+                            // get file name
+                            string _FileName = $@"{Guid.NewGuid()}.svg";
+                            string _Path = Path.Combine(_hostingEnvironment.WebRootPath, "Floors", _FileName);
+
+                            using (var stream = new FileStream(_Path, FileMode.Create))
+                            {
+                                await fvm.File.CopyToAsync(stream);
+                                oldEntry.FilePath = "/Floors/" + _FileName;
+                            }
+                        } else
+                        {
+                            ViewBag.Message("Invalid file uploaded. Please select an SVG file.");
+                            oldEntry.FilePath = ogImage;
+                        }
+
+                    } else
+                    {
+                        // no file uploaded
+                        oldEntry.FilePath = ogImage;
+                    }
+                }
+                catch (Exception e)
+                {
+                    ViewBag.Message("Unable to upload file.");
+                    oldEntry.FilePath = ogImage;
+                }
 
                 // commit changes
-
+                _context.SaveChanges();
 
                 return RedirectToAction(nameof(Index));
             }
