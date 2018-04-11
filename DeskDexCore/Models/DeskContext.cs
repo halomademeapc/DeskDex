@@ -13,6 +13,7 @@ namespace DeskDexCore.Models
         public DbSet<WorkStyle> WorkStyles { get; set; }
         public DbSet<Equipment> Equipment { get; set; }
         public DbSet<StationEquipment> StationEquipments { get; set; }
+        public DbSet<Floor> Floors { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {

@@ -13,9 +13,11 @@ namespace DeskDexCore.Models
         public int ID { get; set; }
 
         [Display(Name = "MAC Address")]
+        [Required]
         public string PhysicalAddress { get; set; }
 
         [Display(Name = "Station Number")]
+        [Required]
         public string Location { get; set; }
 
         [Display(Name = "Available Equipment")]
@@ -45,8 +47,8 @@ namespace DeskDexCore.Models
         [Range(0.0, 1)]
         public float y2 { get; set; }
 
-        [Range(0, 7)]
-        public int Floor { get; set; }
+        [Display(Name = "Floor")]
+        public virtual Floor Floor { get; set; }
 
         [Display(Name = "Picture")]
         public string FilePath { get; set; }
