@@ -31,7 +31,7 @@ namespace DeskDexCore.Controllers
         // GET: Stations
         public ActionResult Index()
         {
-            return View(db.Stations.ToList());
+            return View(db.Stations.Include(stat => stat.Type).ToList());
         }
 
         // GET: Stations/Details/5
@@ -41,7 +41,7 @@ namespace DeskDexCore.Controllers
             {
                 return StatusCode(500);
             }
-            Station station = db.Stations.Find(id);
+            Station station = db.Stations.Where(s => s.ID == id).Include(stat => stat.Type).Include(stat => stat.StationEquipments).ThenInclude(se => se.Equipment).First();
             if (station == null)
             {
                 return StatusCode(404);
