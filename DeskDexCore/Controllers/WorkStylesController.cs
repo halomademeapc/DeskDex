@@ -1,152 +1,131 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net;
 using System.Threading.Tasks;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.Rendering;
-using Microsoft.EntityFrameworkCore;
 using DeskDexCore.Models;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 
 namespace DeskDexCore.Controllers
 {
     public class WorkStylesController : Controller
     {
-        private readonly DeskContext _context;
+        private DeskContext db;
 
         public WorkStylesController(DeskContext context)
         {
-            _context = context;
+            db = context;
         }
 
         // GET: WorkStyles
-        public async Task<IActionResult> Index()
+        public ActionResult Index()
         {
-            return View(await _context.WorkStyles.ToListAsync());
+            return View(db.WorkStyles.ToList());
         }
 
         // GET: WorkStyles/Details/5
-        public async Task<IActionResult> Details(int? id)
+        public ActionResult Details(int? id)
         {
             if (id == null)
             {
-                return NotFound();
+                return StatusCode(500);
             }
-
-            var workStyle = await _context.WorkStyles
-                .SingleOrDefaultAsync(m => m.ID == id);
+            WorkStyle workStyle = db.WorkStyles.Find(id);
             if (workStyle == null)
             {
-                return NotFound();
+                return StatusCode(404);
             }
-
             return View(workStyle);
         }
 
         // GET: WorkStyles/Create
-        public IActionResult Create()
+        public ActionResult Create()
         {
             return View();
         }
 
         // POST: WorkStyles/Create
         // To protect from overposting attacks, please enable the specific properties you want to bind to, for 
-        // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
+        // more details see https://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("ID,Name,Argb")] WorkStyle workStyle)
+        public ActionResult Create(WorkStyle workStyle)
         {
             if (ModelState.IsValid)
             {
-                _context.Add(workStyle);
-                await _context.SaveChangesAsync();
-                return RedirectToAction(nameof(Index));
+                db.WorkStyles.Add(workStyle);
+                db.SaveChanges();
+                return RedirectToAction("Index");
             }
+
             return View(workStyle);
         }
 
         // GET: WorkStyles/Edit/5
-        public async Task<IActionResult> Edit(int? id)
+        public ActionResult Edit(int? id)
         {
             if (id == null)
             {
-                return NotFound();
+                return StatusCode(500);
             }
-
-            var workStyle = await _context.WorkStyles.SingleOrDefaultAsync(m => m.ID == id);
+            WorkStyle workStyle = db.WorkStyles.Find(id);
             if (workStyle == null)
             {
-                return NotFound();
+                return StatusCode(404);
             }
             return View(workStyle);
         }
 
         // POST: WorkStyles/Edit/5
         // To protect from overposting attacks, please enable the specific properties you want to bind to, for 
-        // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
+        // more details see https://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("ID,Name,Argb")] WorkStyle workStyle)
+        public ActionResult Edit(WorkStyle workStyle)
         {
-            if (id != workStyle.ID)
-            {
-                return NotFound();
-            }
-
             if (ModelState.IsValid)
             {
-                try
-                {
-                    _context.Update(workStyle);
-                    await _context.SaveChangesAsync();
-                }
-                catch (DbUpdateConcurrencyException)
-                {
-                    if (!WorkStyleExists(workStyle.ID))
-                    {
-                        return NotFound();
-                    }
-                    else
-                    {
-                        throw;
-                    }
-                }
-                return RedirectToAction(nameof(Index));
+                db.Entry(workStyle).State = EntityState.Modified;
+                db.SaveChanges();
+                return RedirectToAction("Index");
             }
             return View(workStyle);
         }
 
         // GET: WorkStyles/Delete/5
-        public async Task<IActionResult> Delete(int? id)
+        public ActionResult Delete(int? id)
         {
             if (id == null)
             {
-                return NotFound();
+                return StatusCode(500);
             }
-
-            var workStyle = await _context.WorkStyles
-                .SingleOrDefaultAsync(m => m.ID == id);
+            WorkStyle workStyle = db.WorkStyles.Find(id);
             if (workStyle == null)
             {
-                return NotFound();
+                return StatusCode(404);
             }
-
             return View(workStyle);
         }
 
         // POST: WorkStyles/Delete/5
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> DeleteConfirmed(int id)
+        public ActionResult DeleteConfirmed(int id)
         {
-            var workStyle = await _context.WorkStyles.SingleOrDefaultAsync(m => m.ID == id);
-            _context.WorkStyles.Remove(workStyle);
-            await _context.SaveChangesAsync();
-            return RedirectToAction(nameof(Index));
+            WorkStyle workStyle = db.WorkStyles.Find(id);
+            db.WorkStyles.Remove(workStyle);
+            db.SaveChanges();
+            return RedirectToAction("Index");
         }
 
-        private bool WorkStyleExists(int id)
+        protected override void Dispose(bool disposing)
         {
-            return _context.WorkStyles.Any(e => e.ID == id);
+            if (disposing)
+            {
+                db.Dispose();
+            }
+            base.Dispose(disposing);
         }
     }
 }

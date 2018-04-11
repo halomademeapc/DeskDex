@@ -44,5 +44,5 @@
 </div>
 
 @section Scripts {
-    @Scripts.Render("~/bundles/jqueryval")
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
 }
