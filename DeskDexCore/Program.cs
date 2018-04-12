@@ -33,7 +33,7 @@ namespace DeskDexCore
                 }
             }
 
-            host.Run();
+           host.Run();
         }
 
         public static IWebHost BuildWebHost(string[] args) =>

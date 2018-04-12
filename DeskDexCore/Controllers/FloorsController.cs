@@ -81,13 +81,13 @@ namespace DeskDexCore.Controllers
                         }
                         else
                         {
-                            ViewBag.Message("Invalid file uploaded. Please select an SVG file.");
+                            ViewBag.Message = "Invalid file uploaded. Please select an SVG file.";
                         }
                     }
                 }
                 catch (Exception e)
                 {
-                    ViewBag.Message("Unable to upload file.");
+                    ViewBag.Message = "Unable to upload file.";
                 }
 
                 // commit changes
@@ -154,7 +154,7 @@ namespace DeskDexCore.Controllers
                             }
                         } else
                         {
-                            ViewBag.Message("Invalid file uploaded. Please select an SVG file.");
+                            ViewBag.Message = "Invalid file uploaded. Please select an SVG file.";
                             oldEntry.FilePath = ogImage;
                         }
 
@@ -166,7 +166,7 @@ namespace DeskDexCore.Controllers
                 }
                 catch (Exception e)
                 {
-                    ViewBag.Message("Unable to upload file.");
+                    ViewBag.Message = "Unable to upload file.";
                     oldEntry.FilePath = ogImage;
                 }
 
