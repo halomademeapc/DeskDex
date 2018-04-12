@@ -26,7 +26,7 @@ namespace DeskDexCore.Controllers
         // GET: Floors
         public async Task<IActionResult> Index()
         {
-            return View(await _context.Floors.ToListAsync());
+            return View(await _context.Floors.OrderBy(f => f.SortName).ToListAsync());
         }
 
         // GET: Floors/Details/5

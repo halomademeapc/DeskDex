@@ -13,9 +13,11 @@
     </div>
     <div class="clearfix"></div>
 
-    <p>
-        <a asp-action="Create">Create New</a>
-    </p>
+    <nav class="breadcrumb my-3">
+        @Html.ActionLink("DeskDex", "Index", "Home", null, new { @class = "breadcrumb-item" })
+        <span class="breadcrumb-item">Management</span>
+        <span class="breadcrumb-item active">Floors</span>
+    </nav>
     <table class="table">
         <thead>
             <tr>
