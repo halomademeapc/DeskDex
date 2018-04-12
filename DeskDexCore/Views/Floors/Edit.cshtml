@@ -11,7 +11,7 @@
         @Html.ActionLink("DeskDex", "Index", "Home", null, new { @class = "breadcrumb-item" })
         <span class="breadcrumb-item">Management</span>
         @Html.ActionLink("Floors", "Index", "Floors", null, new { @class = "breadcrumb-item" })
-        <span class="breadcrumb-item">@Model.Floor.Name</span>
+        @Html.ActionLink(Model.Name, "Details", "Floors", new { id = Model.ID }, new { @class = "breadcrumb-item" })
         <span class="breadcrumb-item active">Edit</span>
     </nav>
 
