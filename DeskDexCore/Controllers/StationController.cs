@@ -31,7 +31,7 @@ namespace DeskDexCore.Controllers
         // GET: Stations
         public ActionResult Index()
         {
-            return View(db.Stations.Include(stat => stat.Type).ToList());
+            return View(db.Stations.Include(stat => stat.Type).Include(stat => stat.Floor).ToList());
         }
 
         // GET: Stations/Details/5
@@ -41,7 +41,7 @@ namespace DeskDexCore.Controllers
             {
                 return StatusCode(500);
             }
-            Station station = db.Stations.Where(s => s.ID == id).Include(stat => stat.Type).Include(stat => stat.StationEquipments).ThenInclude(se => se.Equipment).First();
+            Station station = db.Stations.Where(s => s.ID == id).Include(stat => stat.Type).Include(stat => stat.StationEquipments).ThenInclude(se => se.Equipment).Include(se => se.Floor).First();
             if (station == null)
             {
                 return StatusCode(404);
@@ -72,6 +72,13 @@ namespace DeskDexCore.Controllers
                 Value = w.ID.ToString()
             });
 
+            var allFloorsList = db.Floors.ToList();
+            stationViewModel.AllFloors = allFloorsList.OrderBy(f => f.SortName).Select(f => new SelectListItem
+            {
+                Text = f.Name,
+                Value = f.ID.ToString()
+            });
+
             return View(stationViewModel);
         }
 
@@ -100,6 +107,7 @@ namespace DeskDexCore.Controllers
                 }
 
                 station.Type = db.WorkStyles.Find(stationViewModel.selectedWorkStyle);
+                station.Floor = db.Floors.Find(stationViewModel.selectedFloor);
 
                 // handle image
                 try
@@ -168,6 +176,13 @@ namespace DeskDexCore.Controllers
                 Value = w.ID.ToString()
             });
 
+            var allFloorsList = db.Floors.ToList();
+            stationViewModel.AllFloors = allFloorsList.OrderBy(f => f.SortName).Select(f => new SelectListItem
+            {
+                Text = f.Name,
+                Value = f.ID.ToString()
+            });
+
             return View(stationViewModel);
         }
 
@@ -180,7 +195,10 @@ namespace DeskDexCore.Controllers
         {
             if (ModelState.IsValid)
             {
-                db.Database.ExecuteSqlCommand("DELETE FROM StationEquipments where StationID = @ID", new SqlParameter("@ID", stationViewModel.Station.ID));
+                foreach (var old in db.StationEquipments.Where(se => se.StationId == stationViewModel.Station.ID))
+                {
+                    db.StationEquipments.Remove(old);
+                }
 
                 var station = stationViewModel.Station;
 
@@ -235,6 +253,7 @@ namespace DeskDexCore.Controllers
                 }
 
                 oldEntry.Type = db.WorkStyles.Find(stationViewModel.selectedWorkStyle);
+                oldEntry.Floor = db.Floors.Find(stationViewModel.selectedFloor);
 
                 db.SaveChanges();
                 return RedirectToAction("Index");

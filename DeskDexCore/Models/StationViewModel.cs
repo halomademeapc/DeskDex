@@ -13,8 +13,10 @@ namespace DeskDexCore.Models
         public Station Station { get; set; }
         public IEnumerable<SelectListItem> AllEquipment { get; set; }
         public IEnumerable<SelectListItem> AllWorkStyles { get; set; }
+        public IEnumerable<SelectListItem> AllFloors { get; set; }
 
         public int selectedWorkStyle { get; set; }
+        public int selectedFloor { get; set; }
 
         [Display(Name = "Image")]
         public IFormFile File { get; set; }
