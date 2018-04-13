@@ -154,7 +154,7 @@ namespace DeskDexCore.Controllers
             }
             var stationViewModel = new StationViewModel
             {
-                Station = db.Stations.Find(id)
+                Station = db.Stations.Where(s => s.ID == id).Include(s => s.StationEquipments).First()
 
             };
             if (stationViewModel.Station == null)
@@ -202,7 +202,7 @@ namespace DeskDexCore.Controllers
 
                 var station = stationViewModel.Station;
 
-                var oldEntry = db.Stations.Find(station.ID);
+                var oldEntry = db.Stations.Where(s => s.ID == stationViewModel.Station.ID).Include(s => s.StationEquipments).First();
 
                 var ogImage = oldEntry.FilePath;
 
@@ -245,7 +245,7 @@ namespace DeskDexCore.Controllers
 
                 foreach (var equip in stationViewModel.SelectedEquipment)
                 {
-                    station.StationEquipments.Add(new StationEquipment
+                    oldEntry.StationEquipments.Add(new StationEquipment
                     {
                         StationId = station.ID,
                         EquipmentId = equip

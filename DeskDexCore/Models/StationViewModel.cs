@@ -31,10 +31,9 @@ namespace DeskDexCore.Models
                     try
                     {
                         _selectedEquipment = Station.StationEquipments.Select(e => e.EquipmentId).ToList();
-                    }
-                    catch (Exception e)
+                    } catch
                     {
-                        //
+                        _selectedEquipment = new List<int>();
                     }
                 }
                 return _selectedEquipment;
