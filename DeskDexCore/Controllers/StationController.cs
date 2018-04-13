@@ -229,6 +229,13 @@ namespace DeskDexCore.Controllers
                             oldEntry.FilePath = "/Uploaded/" + _FileName;
 
                             scaled.Dispose();
+
+                            // delete old image
+                            string delTarget = _hostingEnvironment.WebRootPath + ogImage.Replace("/", "\\");
+                            if (System.IO.File.Exists(delTarget))
+                            {
+                                System.IO.File.Delete(delTarget);
+                            }
                         }
 
                     }
@@ -282,8 +289,17 @@ namespace DeskDexCore.Controllers
         public ActionResult DeleteConfirmed(int id)
         {
             Station station = db.Stations.Find(id);
+            string ogImage = station.FilePath;
             db.Stations.Remove(station);
             db.SaveChanges();
+
+            // delete old image
+            string delTarget = _hostingEnvironment.WebRootPath + ogImage.Replace("/","\\");
+            if (System.IO.File.Exists(delTarget))
+            {
+                System.IO.File.Delete(delTarget);
+            }
+
             return RedirectToAction("Index");
         }
 
