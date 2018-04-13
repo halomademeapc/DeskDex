@@ -5,7 +5,7 @@
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
 
-<div class="container mt-4">
+<div class="container my-4">
     <h2>Edit @Html.DisplayFor(model => model.Station.Location)</h2>
 
     <nav class="breadcrumb my-3">
@@ -39,16 +39,14 @@
         </div>
 
         <div class="md-form form-group col-md-4">
-            @Html.EditorFor(model => model.Station.Floor, new { htmlAttributes = new { @class = "form-control" } })
-            @Html.LabelFor(model => model.Station.Floor)
-            @Html.ValidationMessageFor(model => model.Station.Floor, "", new { @class = "text-danger" })
-
-        </div>
-
-        <div class="md-form form-group col-md-4">
             @Html.EditorFor(model => model.Station.Capacity, new { htmlAttributes = new { @class = "form-control" } })
             @Html.LabelFor(model => model.Station.Capacity)
             @Html.ValidationMessageFor(model => model.Station.Capacity, "", new { @class = "text-danger" })
+        </div>
+
+        <div class="form-group col-md-4">
+            @Html.LabelFor(model => model.selectedFloor, "Floor")
+            <div>@Html.DropDownListFor(model => model.selectedFloor, Model.AllFloors, new { @class = "form-control" })</div>
         </div>
 
         <div class="md-form form-group col-md-4 d-none">
@@ -106,60 +104,11 @@
 </div>
 
 @section Scripts {
+    <script>let defaultFloor = @(ViewBag.DefaultFloor != null ? ViewBag.DefaultFloor : 1);</script>
     <script src="@Url.Content("~/js/jquery.Jcrop.min.js")"></script>
     <script src="@Url.Content("~/js/jquery.color.js")"></script>
     @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
-    <script>
-let floorSelect;
-$(document).ready(function () {
-    floorSelect = $("#Station_Floor");
-    console.log(floorSelect.val());
-    if (floorSelect.val() != "") {
-        loadMap(floorSelect.val());
-    }
-
-    floorSelect.on("change", function () {
-        loadMap($(this).val());
-    });
-});
-
-function setCoords(c) {
-    //console.log(c);
-    var map = $("#mapContainer").children("img");
-    xs = map.width();
-    ys = map.height();
-    var x1 = c.x / xs;
-    var x2 = c.x2 / xs;
-    var y1 = c.y / ys;
-    var y2 = c.y2 / ys;
-    $("#Station_x1").val(x1);
-    $("#Station_x2").val(x2);
-    $("#Station_y1").val(y1);
-    $("#Station_y2").val(y2);
-}
-
-function loadMap(floor) {
-    // load background svg
-    console.log("loading floor " + floor);
-    var mapContainer = $("#mapContainer");
-    mapContainer.empty();
-    var image = $(document.createElement('img'));
-    image.attr('src', '@(Url.Content("~/images/svg/floor"))' + floor + '.svg');
-    image.removeAttr("style");
-    image.attr("width", "100%");
-    mapContainer.append(image);
-    image.on("load", function () {
-        image.Jcrop({
-            onChange: setCoords,
-            onSelect: setCoords,
-            bgColor: 'white',
-            setSelect: [image.width() * parseFloat(@Model.Station.x1), image.height() * parseFloat(@Model.Station.y1), image.width() * parseFloat(@Model.Station.x2), image.height() * parseFloat(@Model.Station.y2)],
-        });
-    });
-
-    }
-    </script>
-
+    <script src="@Url.Content("~/js/stationEdit.js")"></script>
 }
 
 @section Styles {

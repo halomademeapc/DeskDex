@@ -1,0 +1,46 @@
+﻿@model DeskDexCore.Models.Floor
+
+@{
+    ViewData["Title"] = "Delete";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div class="container my-4">
+    <h2>Edit Floor @Html.DisplayFor(model => model.Name)</h2>
+
+    <nav class="breadcrumb my-3">
+        @Html.ActionLink("DeskDex", "Index", "Home", null, new { @class = "breadcrumb-item" })
+        <span class="breadcrumb-item">Management</span>
+        @Html.ActionLink("Floors", "Index", "Floors", null, new { @class = "breadcrumb-item" })
+        @Html.ActionLink(Model.Name, "Details", "Floors", new { id = Model.ID }, new { @class = "breadcrumb-item" })
+        <span class="breadcrumb-item active">Delete</span>
+    </nav>
+
+    <div class="py-1"></div>
+    <hr />
+    <dl class="dl-horizontal">
+        <dt>
+            @Html.DisplayNameFor(model => model.Name)
+        </dt>
+        <dd>
+            @Html.DisplayFor(model => model.Name)
+        </dd>
+        <dt>
+            @Html.DisplayNameFor(model => model.SortName)
+        </dt>
+        <dd>
+            @Html.DisplayFor(model => model.SortName)
+        </dd>
+        <dt>
+            @Html.DisplayNameFor(model => model.FilePath)
+        </dt>
+        <dd>
+            <img src="@Model.FilePath" width="100%" />
+        </dd>
+    </dl>
+
+    <form asp-action="Delete">
+        <input type="hidden" asp-for="ID" />
+        <input type="submit" value="Delete" class="btn btn-danger" />
+    </form>
+</div>

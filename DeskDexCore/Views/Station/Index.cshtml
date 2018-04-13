@@ -4,7 +4,7 @@
     ViewBag.Title = "Index";
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
-<div class="container mt-4">
+<div class="container my-4">
     <h2 class="float-sm-left">Stations</h2>
 
     <div class="float-sm-right btn-group" role="group">
@@ -52,7 +52,7 @@
                         @Html.DisplayFor(modelItem => item.Type.Name)
                     </div>
                     <div class="col-sm-1">
-                        <span class="d-sm-none">Floor </span>@Html.DisplayFor(modelItem => item.Floor)
+                        <span class="d-sm-none">Floor </span>@Html.DisplayFor(modelItem => item.Floor.Name)
                     </div>
                     <div class="col-sm-3 text-right" role="group">
                         <a href="@Url.Action("Details", new { id = item.ID })" class="mx-2 btn-flat"><i class="fas fa-info"></i></a>

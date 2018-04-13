@@ -31,7 +31,7 @@ namespace DeskDexCore.Controllers
         // GET: Stations
         public ActionResult Index()
         {
-            return View(db.Stations.Include(stat => stat.Type).ToList());
+            return View(db.Stations.OrderByDescending(s => s.ID).Include(stat => stat.Type).Include(stat => stat.Floor).ToList());
         }
 
         // GET: Stations/Details/5
@@ -41,7 +41,7 @@ namespace DeskDexCore.Controllers
             {
                 return StatusCode(500);
             }
-            Station station = db.Stations.Where(s => s.ID == id).Include(stat => stat.Type).Include(stat => stat.StationEquipments).ThenInclude(se => se.Equipment).First();
+            Station station = db.Stations.Where(s => s.ID == id).Include(stat => stat.Type).Include(stat => stat.StationEquipments).ThenInclude(se => se.Equipment).Include(se => se.Floor).First();
             if (station == null)
             {
                 return StatusCode(404);
@@ -72,6 +72,13 @@ namespace DeskDexCore.Controllers
                 Value = w.ID.ToString()
             });
 
+            var allFloorsList = db.Floors.ToList();
+            stationViewModel.AllFloors = allFloorsList.OrderBy(f => f.SortName).Select(f => new SelectListItem
+            {
+                Text = f.Name,
+                Value = f.ID.ToString()
+            });
+
             return View(stationViewModel);
         }
 
@@ -100,6 +107,7 @@ namespace DeskDexCore.Controllers
                 }
 
                 station.Type = db.WorkStyles.Find(stationViewModel.selectedWorkStyle);
+                station.Floor = db.Floors.Find(stationViewModel.selectedFloor);
 
                 // handle image
                 try
@@ -146,7 +154,7 @@ namespace DeskDexCore.Controllers
             }
             var stationViewModel = new StationViewModel
             {
-                Station = db.Stations.Find(id)
+                Station = db.Stations.Where(s => s.ID == id).Include(s => s.StationEquipments).First()
 
             };
             if (stationViewModel.Station == null)
@@ -168,6 +176,13 @@ namespace DeskDexCore.Controllers
                 Value = w.ID.ToString()
             });
 
+            var allFloorsList = db.Floors.ToList();
+            stationViewModel.AllFloors = allFloorsList.OrderBy(f => f.SortName).Select(f => new SelectListItem
+            {
+                Text = f.Name,
+                Value = f.ID.ToString()
+            });
+
             return View(stationViewModel);
         }
 
@@ -180,11 +195,14 @@ namespace DeskDexCore.Controllers
         {
             if (ModelState.IsValid)
             {
-                db.Database.ExecuteSqlCommand("DELETE FROM StationEquipments where StationID = @ID", new SqlParameter("@ID", stationViewModel.Station.ID));
+                foreach (var old in db.StationEquipments.Where(se => se.StationId == stationViewModel.Station.ID))
+                {
+                    db.StationEquipments.Remove(old);
+                }
 
                 var station = stationViewModel.Station;
 
-                var oldEntry = db.Stations.Find(station.ID);
+                var oldEntry = db.Stations.Where(s => s.ID == stationViewModel.Station.ID).Include(s => s.StationEquipments).First();
 
                 var ogImage = oldEntry.FilePath;
 
@@ -211,6 +229,13 @@ namespace DeskDexCore.Controllers
                             oldEntry.FilePath = "/Uploaded/" + _FileName;
 
                             scaled.Dispose();
+
+                            // delete old image
+                            string delTarget = _hostingEnvironment.WebRootPath + ogImage.Replace("/", "\\");
+                            if (System.IO.File.Exists(delTarget))
+                            {
+                                System.IO.File.Delete(delTarget);
+                            }
                         }
 
                     }
@@ -227,7 +252,7 @@ namespace DeskDexCore.Controllers
 
                 foreach (var equip in stationViewModel.SelectedEquipment)
                 {
-                    station.StationEquipments.Add(new StationEquipment
+                    oldEntry.StationEquipments.Add(new StationEquipment
                     {
                         StationId = station.ID,
                         EquipmentId = equip
@@ -235,6 +260,7 @@ namespace DeskDexCore.Controllers
                 }
 
                 oldEntry.Type = db.WorkStyles.Find(stationViewModel.selectedWorkStyle);
+                oldEntry.Floor = db.Floors.Find(stationViewModel.selectedFloor);
 
                 db.SaveChanges();
                 return RedirectToAction("Index");
@@ -263,8 +289,17 @@ namespace DeskDexCore.Controllers
         public ActionResult DeleteConfirmed(int id)
         {
             Station station = db.Stations.Find(id);
+            string ogImage = station.FilePath;
             db.Stations.Remove(station);
             db.SaveChanges();
+
+            // delete old image
+            string delTarget = _hostingEnvironment.WebRootPath + ogImage.Replace("/","\\");
+            if (System.IO.File.Exists(delTarget))
+            {
+                System.IO.File.Delete(delTarget);
+            }
+
             return RedirectToAction("Index");
         }
 

@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using DeskDexCore.Models;
+using Microsoft.AspNetCore.Mvc.Rendering;
 
 namespace DeskDexCore.Controllers
 {
@@ -33,7 +34,18 @@ namespace DeskDexCore.Controllers
             {
                 ViewBag.DefaultFloor = Request.Cookies["mapFloor"].ToString();
             }
-            return View(db.WorkStyles.ToList());
+            var vm = new LegendViewModel{
+                AllWorkStyles = db.WorkStyles.ToList()
+            };
+
+            var AllFloorsList = db.Floors.ToList();
+            vm.AllFloors = AllFloorsList.OrderBy(f => f.SortName).Select(f => new SelectListItem
+            {
+                Text = f.Name,
+                Value = f.ID.ToString()
+            });
+
+            return View(vm);
         }
 
         [AllowAnonymous]

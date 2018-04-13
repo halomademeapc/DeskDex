@@ -1,0 +1,48 @@
+﻿@model DeskDexCore.Models.FloorViewModel
+
+@{
+    ViewData["Title"] = "Create";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+<div class="container my-4">
+    <h2>Create Floor</h2>
+
+    <nav class="breadcrumb my-3">
+        @Html.ActionLink("DeskDex", "Index", "Home", null, new { @class = "breadcrumb-item" })
+        <span class="breadcrumb-item">Management</span>
+        @Html.ActionLink("Floors", "Index", "Floors", null, new { @class = "breadcrumb-item" })
+        <span class="breadcrumb-item active">Create</span>
+    </nav>
+
+    <div class="py-1"></div>
+    @using (Html.BeginForm("Create", "Floors", FormMethod.Post, new { enctype = "multipart/form-data" }))
+    {
+        @Html.AntiForgeryToken()
+
+        @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+
+        <div class="md-form form-group col-md-4">
+            @Html.TextBoxFor(model => model.Floor.Name, new { @class = "form-control" })
+            @Html.LabelFor(model => model.Floor.Name)
+            @Html.ValidationMessageFor(model => model.Floor.Name, "", new { @class = "text-danger" })
+        </div>
+        <div class="md-form form-group col-md-4">
+            @Html.TextBoxFor(model => model.Floor.SortName, new { @class = "form-control" })
+            @Html.LabelFor(model => model.Floor.SortName)
+            @Html.ValidationMessageFor(model => model.Floor.SortName, "", new { @class = "text-danger" })
+        </div>
+        <div class="form-group col-md-4">
+            @Html.LabelFor(model => model.File)
+            <div>@Html.TextBoxFor(model => model.File, new { type = "file", accept = ".svg", @class = "form-control-file" })</div>
+            @Html.ValidationMessageFor(model => model.File, "", new { @class = "text-danger" })
+        </div>
+
+        <div class="md-form form-group col-md-4">
+            <input type="submit" value="Create" class="btn btn-primary" />
+        </div>
+    }
+</div>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}
