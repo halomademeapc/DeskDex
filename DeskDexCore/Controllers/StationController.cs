@@ -19,7 +19,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace DeskDexCore.Controllers
 {
-    [Authorize]
+    [Authorize(Policy = "Admins")]
     public class StationController : Controller
     {
         private DeskContext db;
