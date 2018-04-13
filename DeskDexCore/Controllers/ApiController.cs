@@ -23,32 +23,47 @@ namespace DeskDexCore.Controllers
 
         // GET: api/Desk
         [Route("api/map/{floor}")]
-        public IEnumerable<DeskMapApiModel> GetStations(int? floor)
+        public FloorApiModel GetStations(int? floor)
         {
             /* Return an overview for use on the map based on floor
              */
-            List<DeskMapApiModel> vm = new List<DeskMapApiModel>();
-            //var query;
-            List<Station> Stations;
 
-            Stations = db.Stations.Where(s => s.Floor.ID == floor).Include(s => s.Type).Include(s => s.LastCheckin).ToList();
-
-            foreach (var Station in Stations)
+            try
             {
-                vm.Add(new DeskMapApiModel
+                Floor Floor = db.Floors.Find(floor);
+
+                FloorApiModel am = new FloorApiModel
                 {
-                    DeskID = Station.ID,
-                    x1 = Station.x1,
-                    x2 = Station.x2,
-                    y1 = Station.y1,
-                    y2 = Station.y2,
-                    WorkStyle = Station.Type?.Name,
-                    LastCheckin = Station.LastCheckin?.LastUpdate,
-                    Location = Station.Location
-                });
+                    Generated = DateTime.Now,
+                    Stations = new List<DeskMapApiModel>(),
+                    FloorImage = Floor.FilePath,
+                    FloorName = Floor.Name
+                };
+
+                List<Station> Stations = db.Stations.Where(s => s.Floor.ID == floor).Include(s => s.Type).Include(s => s.LastCheckin).ToList();
+
+                foreach (var Station in Stations)
+                {
+                    am.Stations.Add(new DeskMapApiModel
+                    {
+                        DeskID = Station.ID,
+                        x1 = Station.x1,
+                        x2 = Station.x2,
+                        y1 = Station.y1,
+                        y2 = Station.y2,
+                        WorkStyle = Station.Type?.Name,
+                        LastCheckin = Station.LastCheckin?.LastUpdate,
+                        Location = Station.Location
+                    });
+                }
+
+                return am;
+            }
+            catch
+            {
+                return null;
             }
 
-            return vm;
         }
 
         // GET: api/Desk/5
