@@ -23,6 +23,8 @@ namespace DeskDexCore
         }
 
         public IConfiguration Configuration { get; }
+        public const string ObjectIdentifierType = "http://schemas.microsoft.com/identity/claims/objectidentifier";
+        public const string TenantIdType = "http://schemas.microsoft.com/identity/claims/tenantid";
 
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
@@ -33,11 +35,15 @@ namespace DeskDexCore
             {
                 sharedOptions.DefaultScheme = CookieAuthenticationDefaults.AuthenticationScheme;
                 sharedOptions.DefaultChallengeScheme = OpenIdConnectDefaults.AuthenticationScheme;
+                sharedOptions.DefaultChallengeScheme = OpenIdConnectDefaults.AuthenticationScheme;
             })
             .AddAzureAd(options => Configuration.Bind("AzureAd", options))
             .AddCookie();
 
             services.AddMvc();
+
+            services.AddMemoryCache();
+            services.AddSession();
 
             services.AddAuthorization(options =>
             {
@@ -46,7 +52,8 @@ namespace DeskDexCore
                         "deccc31c-a103-4328-b70b-5793992bba82"));
             });
 
-
+            services.AddSingleton<IGraphAuthProvider, GraphAuthProvider>();
+            services.AddTransient<IGraphSdkHelper, GraphSdkHelper>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -63,6 +70,8 @@ namespace DeskDexCore
             }
 
             app.UseStaticFiles();
+
+            app.UseSession();
 
             app.UseAuthentication();
 
