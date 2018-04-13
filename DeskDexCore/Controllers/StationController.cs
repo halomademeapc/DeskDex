@@ -31,7 +31,7 @@ namespace DeskDexCore.Controllers
         // GET: Stations
         public ActionResult Index()
         {
-            return View(db.Stations.Include(stat => stat.Type).Include(stat => stat.Floor).ToList());
+            return View(db.Stations.OrderByDescending(s => s.ID).Include(stat => stat.Type).Include(stat => stat.Floor).ToList());
         }
 
         // GET: Stations/Details/5

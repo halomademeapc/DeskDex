@@ -52,7 +52,7 @@
                         @Html.DisplayFor(modelItem => item.Type.Name)
                     </div>
                     <div class="col-sm-1">
-                        <span class="d-sm-none">Floor </span>@Html.DisplayFor(modelItem => item.Floor)
+                        <span class="d-sm-none">Floor </span>@Html.DisplayFor(modelItem => item.Floor.Name)
                     </div>
                     <div class="col-sm-3 text-right" role="group">
                         <a href="@Url.Action("Details", new { id = item.ID })" class="mx-2 btn-flat"><i class="fas fa-info"></i></a>
