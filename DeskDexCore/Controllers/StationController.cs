@@ -6,8 +6,10 @@ using System.Drawing.Drawing2D;
 using System.Drawing.Imaging;
 using System.IO;
 using System.Linq;
+using System.Security.Claims;
 using System.Threading.Tasks;
 using DeskDexCore.Models;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
@@ -17,6 +19,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace DeskDexCore.Controllers
 {
+    [Authorize(Policy = "Admins")]
     public class StationController : Controller
     {
         private DeskContext db;
@@ -31,6 +34,7 @@ namespace DeskDexCore.Controllers
         // GET: Stations
         public ActionResult Index()
         {
+            ViewBag.UserName = ((ClaimsIdentity)User.Identity).Claims;
             return View(db.Stations.OrderByDescending(s => s.ID).Include(stat => stat.Type).Include(stat => stat.Floor).ToList());
         }
 

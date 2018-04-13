@@ -8,9 +8,11 @@ using Microsoft.EntityFrameworkCore;
 using DeskDexCore.Models;
 using System.IO;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Authorization;
 
 namespace DeskDexCore.Controllers
 {
+    [Authorize(Policy = "Admins")]
     public class FloorsController : Controller
     {
         private readonly DeskContext _context;

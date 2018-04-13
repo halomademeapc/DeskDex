@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using DeskDexCore.Models;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
@@ -10,6 +11,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace DeskDexCore.Controllers
 {
+    [Authorize(Policy = "Admins")]
     public class EquipmentController : Controller
     {
         private DeskContext db;
