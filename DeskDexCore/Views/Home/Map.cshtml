@@ -1,4 +1,4 @@
-﻿@model IEnumerable<DeskDexCore.Models.WorkStyle>
+﻿@model LegendViewModel
 @{
     ViewBag.Title = "Map";
     ViewBag.Active = "map";
@@ -35,7 +35,7 @@
     <div class="float-right">
         <div class="text-right mb-1 mr-2">
             <!-- legend -->
-            @foreach(var item in Model)
+            @foreach (var item in Model.AllWorkStyles)
             {
                 <div>
                     <small>@item.Name</small>
@@ -48,14 +48,7 @@
                 <div class="input-group-prepend">
                     <div class="input-group-text"><label for="floorSelect" class="mr-2 my-0">Floor</label></div>
                 </div>
-
-                <select class="form-control py-1" id="floorSelect">
-                    @for (int i = 1; i <= 7; i++)
-                    {
-                        <option value="@i" @(ViewBag.DefaultFloor == i.ToString() ? "selected" : "")>@i</option>
-                    }
-                    <option value="0" @(ViewBag.DefaultFloor == 0.ToString() ? "selected" : "")>Other</option>
-                </select>
+                @Html.DropDownList("floorSelect", Model.AllFloors, new { @class = "form-control py-1", @id = "floorSelect" })
             </div>
         </span>
     </div>
@@ -69,8 +62,7 @@
                     <div class="card-text">
                         <div><strong>Capacity</strong> <span id="rdCapacity"></span><span id="rdCheckin"> | Last check-in by <strong id="rdPerson"></strong> at <strong id="rdTime"></strong>.</span></div>
                         <div>Available Equipment:</div>
-                        <ul class="text-small" id="rdEquipment">
-                        </ul>
+                        <ul class="text-small" id="rdEquipment"></ul>
                     </div>
                 </div>
                 <div class="col-md-3 d-none d-md-block pr-0">
@@ -130,15 +122,17 @@
             // call API to get desk locations on this floor
             $.getJSON('/api/map/' + floor, function (data) {
                 console.log(data);
-                for (var i = 0; i < data.length; i++) {
-                    var thisStation = createStation(data[i]);
+                // load image
+                $("#mapImage").attr('src', data.floorImage);
+                // load stations
+                for (var i = 0; i < data.stations.length; i++) {
+                    var thisStation = createStation(data.stations[i]);
                     console.log(thisStation);
                     olDiv.append(thisStation);
                 }
             });
 
             // load background svg
-            $("#mapImage").attr('src', '@(Url.Content("~/images/svg/floor"))' + floor + '.svg');
         }
 
         function createStation(stationViewModel) {
@@ -224,7 +218,7 @@
 }
 
 @section Styles {
-    @foreach (var item in Model)
+    @foreach (var item in Model.AllWorkStyles)
     {
         <link href="@Url.Content("~/css/map.css")" rel="stylesheet" />
         <style>
