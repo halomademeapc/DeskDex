@@ -22,7 +22,7 @@ namespace DeskDexCore.Controllers
         }
 
         // GET: api/Desk
-        [Route("api/map/{floor}")]
+        [Route("api/floor/{floor}")]
         public FloorApiModel GetStations(int? floor)
         {
             /* Return an overview for use on the map based on floor
@@ -64,6 +64,19 @@ namespace DeskDexCore.Controllers
                 return null;
             }
 
+        }
+
+        [Route("api/map/{floor}")]
+        public Floor getMap(int floor)
+        {
+            try
+            {
+                return db.Floors.Find(floor);
+            }
+            catch
+            {
+                return null;
+            }
         }
 
         // GET: api/Desk/5

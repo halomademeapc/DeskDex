@@ -120,7 +120,7 @@
             olDiv.empty();
 
             // call API to get desk locations on this floor
-            $.getJSON('/api/map/' + floor, function (data) {
+            $.getJSON('/api/floor/' + floor, function (data) {
                 console.log(data);
                 // load image
                 $("#mapImage").attr('src', data.floorImage);
