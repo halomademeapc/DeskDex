@@ -38,6 +38,15 @@ namespace DeskDexCore
             .AddCookie();
 
             services.AddMvc();
+
+            services.AddAuthorization(options =>
+            {
+                options.AddPolicy("Admins",
+                        policyBuilder => policyBuilder.RequireClaim("groups",
+                        "deccc31c-a103-4328-b70b-5793992bba82"));
+            });
+
+
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

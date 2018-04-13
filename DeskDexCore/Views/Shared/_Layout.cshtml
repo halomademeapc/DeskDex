@@ -1,4 +1,10 @@
-﻿<!DOCTYPE html>
+﻿@using System.Security.Principal
+@using System.Security.Claims
+@{
+    var claims = ((ClaimsIdentity)User.Identity).Claims;
+    var name = claims.FirstOrDefault(c => c.Type == "name")?.Value;
+}
+<!DOCTYPE html>
 <html>
 <head>
     <meta charset="utf-8" />
@@ -30,15 +36,25 @@
                     <li class="nav-item @(ViewBag.Active == "map" ? "active" : "")">
                         <a href="@Url.Action("Map","Home")" class="nav-link">Map</a>
                     </li>
-                    <li class="nav-item dropdown @(ViewBag.Active == "management" ? "active" : "")">
-                        <a class="nav-link dropdown-toggle" id="mgmtDdLink" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" Management>Management</a>
-                        <div class="dropdown-menu dropdown-primary" aria-labelledby="mgmtDdLink">
-                            @Html.ActionLink("Stations", "Index", "Station", null, new { @class="dropdown-item"})
-                            @Html.ActionLink("Equipment", "Index", "Equipment", null, new { @class="dropdown-item"})
-                            @Html.ActionLink("Station Types", "Index", "WorkStyles", null, new { @class="dropdown-item"})
-                            @Html.ActionLink("Floors", "Index", "Floors", null, new { @class = "dropdown-item" })
-                        </div>
-                    </li>
+                    @if (User.Identity.IsAuthenticated)
+                    {
+                        <li class="nav-item dropdown @(ViewBag.Active == "management" ? "active" : "")">
+                            <a class="nav-link dropdown-toggle" id="mgmtDdLink" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" Management>Management</a>
+                            <div class="dropdown-menu dropdown-primary" aria-labelledby="mgmtDdLink">
+                                @Html.ActionLink("Stations", "Index", "Station", null, new { @class = "dropdown-item" })
+                                @Html.ActionLink("Equipment", "Index", "Equipment", null, new { @class = "dropdown-item" })
+                                @Html.ActionLink("Station Types", "Index", "WorkStyles", null, new { @class = "dropdown-item" })
+                                @Html.ActionLink("Floors", "Index", "Floors", null, new { @class = "dropdown-item" })
+                                @Html.ActionLink("Logout " + name, "SignOut", "Account", null, new { @class = "dropdown-item" })
+                            </div>
+                        </li>
+                    }
+                    else
+                    {
+                        <li class="nav-item">
+                            @Html.ActionLink("Log In", "SignIn", "Account", null, new { @class = "nav-link" })
+                        </li>
+                    }
                 </ul>
 
                 <!-- search -->
@@ -54,7 +70,6 @@
     <div class="body-content">
         @RenderBody()
     </div>
-
 
     <script src="@Url.Content("~/js/jquery-3.2.1.min.js")"></script>
     <script src="@Url.Content("~/js/popper.min.js")"></script>

@@ -10,7 +10,7 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 
 namespace DeskDexCore.Controllers
 {
-    [Authorize]
+    [AllowAnonymous]
     [Route("")]
     public class HomeController : Controller
     {
