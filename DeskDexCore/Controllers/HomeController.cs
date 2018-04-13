@@ -30,11 +30,8 @@ namespace DeskDexCore.Controllers
         [HttpGet("Map")]
         public IActionResult Map()
         {
-            if (Request.Cookies["mapFloor"] != null)
+            var vm = new LegendViewModel
             {
-                ViewBag.DefaultFloor = Request.Cookies["mapFloor"].ToString();
-            }
-            var vm = new LegendViewModel{
                 AllWorkStyles = db.WorkStyles.ToList()
             };
 
@@ -44,6 +41,15 @@ namespace DeskDexCore.Controllers
                 Text = f.Name,
                 Value = f.ID.ToString()
             });
+
+            if (Request.Cookies["mapFloor"] != null)
+            {
+                ViewBag.DefaultFloor = Request.Cookies["mapFloor"].ToString();
+            }
+            else
+            {
+                ViewBag.DefaultFloor = AllFloorsList[0].ID.ToString();
+            }
 
             return View(vm);
         }
