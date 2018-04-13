@@ -1,11 +1,14 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net.Http;
 using System.Threading.Tasks;
+using System.Web;
 using DeskDexCore.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using Newtonsoft.Json;
 
 // For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 
@@ -15,6 +18,7 @@ namespace DeskDexCore.Controllers
     public class ApiController : Controller
     {
         private DeskContext db;
+        private static readonly string GRAPH_URI = "https://graph.windows.net/halomademeapc.com/";
 
         public ApiController(DeskContext context)
         {
@@ -22,6 +26,7 @@ namespace DeskDexCore.Controllers
         }
 
         // GET: api/Desk
+        [HttpGet]
         [Route("api/floor/{floor}")]
         public FloorApiModel GetStations(int? floor)
         {
@@ -66,6 +71,7 @@ namespace DeskDexCore.Controllers
 
         }
 
+        [HttpGet]
         [Route("api/map/{floor}")]
         public Floor getMap(int floor)
         {
@@ -80,6 +86,7 @@ namespace DeskDexCore.Controllers
         }
 
         // GET: api/Desk/5
+        [HttpGet]
         [Route("api/desk/{id}")]
         public DeskDetailApiModel GetStation(int id)
         {
@@ -112,6 +119,7 @@ namespace DeskDexCore.Controllers
         }
 
         [Route("api/checkin")]
+        [HttpPost]
         public ActionResult Post([FromBody]CheckinViewModel input)
         {
             DateTime submitTime = DateTime.Now;
@@ -183,6 +191,62 @@ namespace DeskDexCore.Controllers
             return Ok();
         }
 
+        [Route("api/search")]
+        [HttpGet("{term}")]
+        public async Task<IActionResult> Search(string term)
+        {
+            int searchLimit = 6;
+            return Ok(new SearchApiModel
+            {
+                People = (await FindUsers(term)).Take(searchLimit),
+                Stations = (await FindStations(term)).Take(searchLimit)
+            });
+        }
+
+        private async Task<List<SearchLink>> FindStations(string term)
+        {
+            // look for stations
+            return await (db.Stations.Where(s => s.Location.Contains(term)).Select(s => new SearchLink { Display = s.Location, Link = s.ID.ToString() }).ToListAsync());
+        }
+
+        private async Task<List<SearchLink>> FindUsers(string term)
+        {
+            // look for users in aad
+            HttpClient client = new HttpClient();
+            var queryString = HttpUtility.ParseQueryString(string.Empty);
+            var result = new List<SearchLink>();
+
+            queryString["api-version"] = "1.6";
+            queryString["$filter"] = "startswith(displayName,'" + term + "'";
+
+            var uri = GRAPH_URI + "users?" + queryString;
+            try
+            {
+                var response = await client.GetAsync(uri);
+
+                if (response.Content != null)
+                {
+                    var responseString = await response.Content.ReadAsStringAsync();
+                    var responseJson = JsonConvert.DeserializeObject<dynamic>(responseString);
+
+                    foreach (var user in responseJson.value)
+                    {
+                        result.Add(new SearchLink
+                        {
+                            Display = (string)user.displayName ?? (user.givenName + " " + user.surname) ?? String.Empty,
+                            Link = (string)user.objectId ?? user.userPrincipalName ?? user.mailNickname ?? String.Empty
+                        });
+                    }
+                }
+            }
+            catch
+            {
+                result.Add(new SearchLink { Display = "Unable to connect to Azure AD", Link = String.Empty });
+            }
+
+            return result;
+        }
+
         protected override void Dispose(bool disposing)
         {
             if (disposing)
@@ -196,5 +260,6 @@ namespace DeskDexCore.Controllers
         {
             return db.Stations.Count(e => e.ID == id) > 0;
         }
+
     }
 }
