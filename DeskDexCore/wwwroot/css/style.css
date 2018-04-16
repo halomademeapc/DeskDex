@@ -7,3 +7,6 @@
 .click-default {
     pointer-events:auto;
 }
+#searchClear {
+    margin-left: -2em;
+}
