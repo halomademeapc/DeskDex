@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net.Http;
 using System.Threading.Tasks;
 using DeskDexCore.Models;
 using Microsoft.AspNetCore.Authorization;
@@ -22,6 +23,7 @@ namespace DeskDexCore.Controllers
         }
 
         // GET: api/Desk
+        [HttpGet]
         [Route("api/floor/{floor}")]
         public FloorApiModel GetStations(int? floor)
         {
@@ -66,6 +68,7 @@ namespace DeskDexCore.Controllers
 
         }
 
+        [HttpGet]
         [Route("api/map/{floor}")]
         public Floor getMap(int floor)
         {
@@ -80,6 +83,7 @@ namespace DeskDexCore.Controllers
         }
 
         // GET: api/Desk/5
+        [HttpGet]
         [Route("api/desk/{id}")]
         public DeskDetailApiModel GetStation(int id)
         {
@@ -111,6 +115,7 @@ namespace DeskDexCore.Controllers
             return ddvm;
         }
 
+        [HttpPost]
         [Route("api/checkin")]
         public ActionResult Post([FromBody]CheckinViewModel input)
         {
@@ -182,6 +187,68 @@ namespace DeskDexCore.Controllers
 
             return Ok();
         }
+
+        //[HttpGet("{q}")]
+        [Route("api/search/{q}")]
+        public async Task<IActionResult> Search(string q)
+        {
+            int searchLimit = 6;
+            return Ok(new SearchApiModel
+            {
+                People = (await FindUsers(q)).Take(searchLimit),
+                Stations = (await FindStations(q)).Take(searchLimit)
+            });
+        }
+
+        private async Task<List<SearchLink>> FindStations(string term)
+        {
+            // look for stations 
+            return await (db.Stations.Where(s => s.Location.Contains(term)).Select(s => new SearchLink { Display = s.Location, Link = s.ID.ToString() }).ToListAsync());
+        }
+
+        private async Task<List<SearchLink>> FindUsers(string term)
+        {
+            // look for names on checkins
+            return await db.Stations.Include(s => s.LastCheckin).Where(s => s.LastCheckin.Username.Contains(term)).Select(s => new SearchLink { Display = s.LastCheckin.Username, Link = s.ID.ToString() }).ToListAsync();
+        }
+
+        /*private async Task<List<SearchLink>> FindUsers(string term)
+        {
+            // look for users in aad 
+            HttpClient client = new HttpClient();
+            var queryString = HttpUtility.ParseQueryString(string.Empty);
+            var result = new List<SearchLink>();
+
+            queryString["api-version"] = "1.6";
+            queryString["$filter"] = "startswith(displayName,'" + term + "'";
+
+            var uri = GRAPH_URI + "users?" + queryString;
+            try
+            {
+                var response = await client.GetAsync(uri);
+
+                if (response.Content != null)
+                {
+                    var responseString = await response.Content.ReadAsStringAsync();
+                    var responseJson = JsonConvert.DeserializeObject<dynamic>(responseString);
+
+                    foreach (var user in responseJson.value)
+                    {
+                        result.Add(new SearchLink
+                        {
+                            Display = (string)user.displayName ?? (user.givenName + " " + user.surname) ?? String.Empty,
+                            Link = (string)user.objectId ?? user.userPrincipalName ?? user.mailNickname ?? String.Empty
+                        });
+                    }
+                }
+            }
+            catch
+            {
+                result.Add(new SearchLink { Display = "Unable to connect to Azure AD", Link = String.Empty });
+            }
+
+            return result;
+        }*/
 
         protected override void Dispose(bool disposing)
         {
