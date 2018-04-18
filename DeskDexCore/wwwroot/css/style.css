@@ -23,7 +23,7 @@ a:hover {
     margin-top: -3.5rem;
 }
 .full-viewport {
-    height: 100vh;
+    min-height: 100vh;
 }
 .pt-8 {
     padding-top: 3rem!important;
