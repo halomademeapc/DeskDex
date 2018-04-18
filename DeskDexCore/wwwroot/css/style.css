@@ -16,3 +16,15 @@
 a:hover {
     color: #7a1c16;
 }
+.color-accent {
+    background-color: #1F252B;
+}
+.underflow {
+    margin-top: -3.5rem;
+}
+.full-viewport {
+    height: 100vh;
+}
+.pt-8 {
+    padding-top: 3rem!important;
+}
