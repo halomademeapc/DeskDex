@@ -21,6 +21,12 @@ function loadSearchResults(term) {
         for (var j = 0; j < data.stations.length; j++) {
             createDdlItem(data.stations[j].display, data.stations[j].link, suggest, data.stations[i].subText);
         }
+        if (data.people.length == 0 && data.stations.length == 0) {
+            var d = $(document.createElement('div'));
+            d.addClass("dropdown-item");
+            d.text("No results");
+            suggest.append(d);
+        }
     });
 }
 
