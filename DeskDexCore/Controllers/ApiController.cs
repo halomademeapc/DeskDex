@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net.Http;
 using System.Threading.Tasks;
 using DeskDexCore.Models;
 using Microsoft.AspNetCore.Authorization;
@@ -22,6 +23,7 @@ namespace DeskDexCore.Controllers
         }
 
         // GET: api/Desk
+        [HttpGet]
         [Route("api/floor/{floor}")]
         public FloorApiModel GetStations(int? floor)
         {
@@ -66,6 +68,7 @@ namespace DeskDexCore.Controllers
 
         }
 
+        [HttpGet]
         [Route("api/map/{floor}")]
         public Floor getMap(int floor)
         {
@@ -80,6 +83,7 @@ namespace DeskDexCore.Controllers
         }
 
         // GET: api/Desk/5
+        [HttpGet]
         [Route("api/desk/{id}")]
         public DeskDetailApiModel GetStation(int id)
         {
@@ -111,6 +115,7 @@ namespace DeskDexCore.Controllers
             return ddvm;
         }
 
+        [HttpPost]
         [Route("api/checkin")]
         public ActionResult Post([FromBody]CheckinViewModel input)
         {
@@ -181,6 +186,76 @@ namespace DeskDexCore.Controllers
             }
 
             return Ok();
+        }
+
+        //[HttpGet("{q}")]
+        [Route("api/search/{q}")]
+        public SearchApiModel Search(string q)
+        {
+            int searchLimit = 6;
+
+            var tmp = new SearchApiModel
+            {
+                People = (FindUsers(q)).Take(searchLimit),
+                Stations = (FindStations(q)).Take(searchLimit)
+            };
+            return tmp;
+        }
+
+        private List<SearchLink> FindStations(string term)
+        {
+            // look for stations
+
+            var st = (db.Stations.Include(s => s.Floor).Include(s => s.Type).Where(s => s.Location.Contains(term)).Where(s => s.Floor != null).ToList());
+            return st.Select(s => new SearchLink
+            {
+                Display = s.Location,
+                Link = Url.Action("Map", "Home", null) + "?floor=" + s.Floor.ID.ToString() + "&station=" + s.ID.ToString(),
+                SubText = s.Type.Name
+            }).ToList();
+        }
+
+        private List<SearchLink> FindUsers(string term)
+        {
+            // look for names on checkins
+            var st = db.Stations.Include(s => s.LastCheckin).Include(s => s.Floor).Where(s => s.LastCheckin.Username.Contains(term)).Where(s => s.Floor != null).ToList();
+            return st.Select(s => new SearchLink
+            {
+                Display = s.LastCheckin.Username,
+                Link = Url.Action("Map", "Home", null) + "?floor=" + s.Floor.ID.ToString() + "&station=" + s.ID.ToString(),
+                SubText = "Last seen " + FormatAge(s.LastCheckin.LastUpdate) + " ago"
+            }).ToList();
+        }
+
+        private string FormatAge(DateTime target)
+        {
+            TimeSpan duration = DateTime.Now - target;
+            string formatted = String.Empty;
+
+            var hours = duration.TotalHours;
+            var mins = duration.TotalMinutes;
+
+            if (mins < 60)
+            {
+                formatted = Math.Floor(mins).ToString() + "m";
+            }
+            else
+            {
+                if (hours < 5)
+                {
+                    formatted = Math.Floor(hours).ToString() + "h " + Math.Floor((mins % 60)).ToString() + "m";
+                }
+                else if (hours < 24)
+                {
+                    formatted = Math.Floor(hours).ToString() + "h";
+                }
+                else
+                {
+                    formatted = Math.Floor(duration.TotalDays).ToString();
+                }
+            }
+
+            return formatted;
         }
 
         protected override void Dispose(bool disposing)
