@@ -54,7 +54,7 @@ namespace DeskDexCore.Controllers
                         y1 = Station.y1,
                         y2 = Station.y2,
                         WorkStyle = Station.Type?.Name,
-                        LastCheckin = Station.LastCheckin?.LastUpdate,
+                        Occupied = ((Station.LastCheckin != null) && (DateTime.Now - Station.LastCheckin.LastUpdate).TotalHours < 2) ? true: false,
                         Location = Station.Location
                     });
                 }
