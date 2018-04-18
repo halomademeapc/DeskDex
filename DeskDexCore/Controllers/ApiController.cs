@@ -54,7 +54,7 @@ namespace DeskDexCore.Controllers
                         y1 = Station.y1,
                         y2 = Station.y2,
                         WorkStyle = Station.Type?.Name,
-                        LastCheckin = Station.LastCheckin?.LastUpdate,
+                        Occupied = ((Station.LastCheckin != null) && (DateTime.Now - Station.LastCheckin.LastUpdate).TotalHours < 2) ? true: false,
                         Location = Station.Location
                     });
                 }
@@ -101,7 +101,7 @@ namespace DeskDexCore.Controllers
             {
                 DeskID = station.ID,
                 WorkStyle = station.Type.Name,
-                LastUpdate = station.LastCheckin?.LastUpdate,
+                LastUpdate = (station.LastCheckin != null) ? FormatAge(station.LastCheckin.LastUpdate) : String.Empty,
                 UserName = station.LastCheckin?.Username,
                 Capacity = station.Capacity,
                 Equipment = new List<string>(),

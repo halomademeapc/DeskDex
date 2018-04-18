@@ -9,7 +9,7 @@ namespace DeskDexCore.Models
     {
         public int DeskID { get; set; }
         public string WorkStyle { get; set; }
-        public DateTime? LastUpdate { get; set; }
+        public string LastUpdate { get; set; }
         public string UserName { get; set; }
         public int Capacity { get; set; }
         public List<String> Equipment { get; set; }

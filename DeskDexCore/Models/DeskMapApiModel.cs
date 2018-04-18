@@ -13,7 +13,7 @@ namespace DeskDexCore.Models
         public float y1 { get; set; }
         public float y2 { get; set; }
         public string WorkStyle { get; set; }
-        public DateTime? LastCheckin { get; set; }
+        public bool Occupied { get; set; }
         public string Location { get; set; }
     }
 }

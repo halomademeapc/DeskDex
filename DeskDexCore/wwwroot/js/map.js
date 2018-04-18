@@ -101,6 +101,9 @@ function createStation(stationViewModel) {
     stationDiv.css("top", (stationViewModel.y1 * 100) + "%");
     stationDiv.data("targetsize", .5);
     stationDiv.data("stationID", stationViewModel.deskID);
+    if (stationViewModel.occupied == true) {
+        stationDiv.addClass("occupied");
+    }
 
     $(stationDiv).on("click", function (event) {
         //console.log("station clicked");
@@ -160,6 +163,11 @@ function updateDetails(stationID) {
             var item = $(document.createElement('li'));
             item.text(data.equipment[i]);
             $("#rdEquipment").append(item);
+        }
+        if (data.equipment.length == 0) {
+            var itm = $(document.createElement('li'));
+            itm.text("None listed");
+            $("#rdEquipment").append(itm);
         }
         if (data.imagePath != null) {
             $("#rdImage").attr('src', data.imagePath);
