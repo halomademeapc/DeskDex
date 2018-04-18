@@ -1,9 +1,10 @@
-﻿@{
+﻿@model HomeViewModel
+@{
     ViewBag.Title = "Home Page";
     ViewBag.Active = "home";
     ViewBag.Transparent = true;
 }
-<div class="container-fluid color-accent underflow full-viewport background-cover z-depth-1" style="background-image:url('/images/homebg.jpg')">
+<div class="container-fluid color-accent underflow full-viewport background-cover z-depth-1" style="background-image:url('@Model.MainImage')">
     <div class="pt-8 row align-items-center full-height full-viewport">
         <div class="container">
             <div class="white-text py-4 col">
@@ -19,32 +20,43 @@
     </div>
 </div>
 
-<div class="container my-4">
-    <div class="jumbotron">
-        <h1>How it Works</h1>
+<div class="container my-4 py-4">
+    <div class="">
+        <h2>How it works</h2>
         <p class="lead">It's all in the dock.</p>
-        <p>Your company laptop periodically checks in with DeskDex’s API, allowing the application to keep track of where you’re sitting.  The unique network adapter with each docking station enables your whereabouts to be determined just by plugging in.</p>
+        <p>Your company laptop periodically checks in with DeskDex’s API, allowing the application to keep track of where you’re sitting.  The unique network adapter within each docking station enables your whereabouts to be determined just by plugging in.</p>
     </div>
+</div>
 
-    <div class="row">
-        <div class="col-md-4">
-            <h2>Getting started</h2>
-            <p>
-                ASP.NET MVC gives you a powerful, patterns-based way to build dynamic websites that
-                enables a clean separation of concerns and gives you full control over markup
-                for enjoyable, agile development.
-            </p>
-            <p><a class="btn btn-default" href="https://go.microsoft.com/fwlink/?LinkId=301865">Learn more &raquo;</a></p>
+<div class="container my-4 py-4">
+    <h2>Stats for nerds</h2>
+    <div class="card-deck">
+        <div class="card mb-4">
+            <div class="view overlay">
+                <img class="card-img-top" src="https://mdbootstrap.com/img/Photos/Others/images/16.jpg" alt="Card image cap">
+            </div>
+            <div class="card-body text-center">
+                <h4 class="card-title display-4">@Model.StationCount</h4>
+                <p class="card-text">Stations registered</p>
+            </div>
         </div>
-        <div class="col-md-4">
-            <h2>Get more libraries</h2>
-            <p>NuGet is a free Visual Studio extension that makes it easy to add, remove, and update libraries and tools in Visual Studio projects.</p>
-            <p><a class="btn btn-default" href="https://go.microsoft.com/fwlink/?LinkId=301866">Learn more &raquo;</a></p>
+        <div class="card mb-4">
+            <div class="view overlay">
+                <img class="card-img-top" src="https://mdbootstrap.com/img/Photos/Others/images/14.jpg" alt="Card image cap">
+            </div>
+            <div class="card-body text-center">
+                <h4 class="card-title display-4">@Model.UserCount</h4>
+                <p class="card-text">Active users</p>
+            </div>
         </div>
-        <div class="col-md-4">
-            <h2>Web Hosting</h2>
-            <p>You can easily find a web hosting company that offers the right mix of features and price for your applications.</p>
-            <p><a class="btn btn-default" href="https://go.microsoft.com/fwlink/?LinkId=301867">Learn more &raquo;</a></p>
+        <div class="card mb-4">
+            <div class="view overlay">
+                <img class="card-img-top" src="https://mdbootstrap.com/img/Photos/Others/images/15.jpg" alt="Card image cap">
+            </div>
+            <div class="card-body text-center">
+                <h4 class="card-title display-4">@Model.OpenRatio<small>%</small></h4>
+                <p class="card-text">Stations available</p>
+            </div>
         </div>
     </div>
 </div>
