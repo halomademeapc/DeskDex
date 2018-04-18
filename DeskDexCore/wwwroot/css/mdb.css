@@ -1345,11 +1345,11 @@
 a {
   cursor: pointer;
   text-decoration: none;
-  color: #0275d8; }
+  color: #B42F26; }
   a:hover {
     text-decoration: none; }
   a.disabled:hover, a:disabled:hover {
-    color: #0275d8; }
+    color: #B42F26; }
 
 a:not([href]):not([tabindex]), a:not([href]):not([tabindex]):focus, a:not([href]):not([tabindex]):hover {
   color: inherit;
