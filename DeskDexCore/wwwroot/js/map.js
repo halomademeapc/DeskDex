@@ -1,8 +1,8 @@
-﻿$(document).ready(function () {
+﻿let urlChanged = false;
+$(document).ready(function () {
     //console.log("let's do this!");
-
     var fs = $("#floorSelect");
-    
+
     fs.on("change", function () {
         var targetFloor = $("#floorSelect").val();
         loadMap(targetFloor);
@@ -19,6 +19,12 @@
     $("#overlays").on("click", checkDetailStatus);
 
     var defaultFloor = fs.data("default")
+    // check querystring
+    var urlParams = new URLSearchParams(window.location.search);
+    if (urlParams.has("floor")) {
+        defaultFloor = parseInt(urlParams.get("floor"));
+    }
+
     if (defaultFloor > 0) {
         fs.val(defaultFloor);
     }
@@ -40,6 +46,11 @@ function setOverlay() {
 function loadMap(floor) {
     // set cookie to remember current floor
     document.cookie = "mapFloor=" + floor + ";";
+    if (urlChanged) {
+        window.history.pushState("", "", '/Map?floor=' + floor);
+    } else {
+        urlChanged = true;
+    }
 
     var olDiv = $("#overlays");
 
@@ -51,12 +62,31 @@ function loadMap(floor) {
         //console.log(data);
         // load image
         $("#mapImage").attr('src', data.floorImage);
+
+        // check querystring
+        var urlParams = new URLSearchParams(window.location.search);
+        var targetStation = 0;
+        if (urlParams.has("station")) {
+            targetStation = parseInt(urlParams.get("station"));
+            //console.log("targeting " + targetStation);
+        }
+
         // load stations
         for (var i = 0; i < data.stations.length; i++) {
             var thisStation = createStation(data.stations[i]);
             //console.log(thisStation);
             olDiv.append(thisStation);
+            if (targetStation > 0 && thisStation.data("stationID") == targetStation) {
+                thisStation.addClass("queriedStation");
+                //console.log("zooming to " + thisStation.data("stationID"));
+            }
         }
+
+        //$(".queriedStation").zoomTo();
+        setTimeout(function () {
+            $(".queriedStation").trigger("click");
+            $(".queriedStation").trigger("click");
+        }, 600);
     });
 }
 

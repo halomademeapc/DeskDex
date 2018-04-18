@@ -15,5 +15,6 @@ namespace DeskDexCore.Models
     {
         public string Display { get; set; }
         public string Link { get; set; }
+        public string SubText { get; set; }
     }
 }
