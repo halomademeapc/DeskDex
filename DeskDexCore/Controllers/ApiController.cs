@@ -101,7 +101,7 @@ namespace DeskDexCore.Controllers
             {
                 DeskID = station.ID,
                 WorkStyle = station.Type.Name,
-                LastUpdate = station.LastCheckin?.LastUpdate,
+                LastUpdate = (station.LastCheckin != null) ? FormatAge(station.LastCheckin.LastUpdate) : String.Empty,
                 UserName = station.LastCheckin?.Username,
                 Capacity = station.Capacity,
                 Equipment = new List<string>(),

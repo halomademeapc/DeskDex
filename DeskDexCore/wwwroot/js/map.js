@@ -164,6 +164,11 @@ function updateDetails(stationID) {
             item.text(data.equipment[i]);
             $("#rdEquipment").append(item);
         }
+        if (data.equipment.length == 0) {
+            var itm = $(document.createElement('li'));
+            itm.text("None listed");
+            $("#rdEquipment").append(itm);
+        }
         if (data.imagePath != null) {
             $("#rdImage").attr('src', data.imagePath);
             $("#rdImage").css("display", "block");
