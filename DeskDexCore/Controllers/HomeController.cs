@@ -29,7 +29,7 @@ namespace DeskDexCore.Controllers
                 UserCount = db.Checkins.Where(c => (DateTime.Now - c.LastUpdate).TotalHours < 2).ToList().Count(),
                 StationCount = db.Stations.Where(s => s.Location != "Unknown").ToList().Count()
             };
-            stats.OpenRatio = stats.UserCount > 0 ? ((stats.UserCount * 100) / (stats.StationCount)) : 100;
+            stats.OpenRatio = stats.StationCount > 0 ? ((stats.UserCount * 100) / (stats.StationCount)) : 100;
             return View(stats);
         }
 
