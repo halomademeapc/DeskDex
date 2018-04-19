@@ -102,7 +102,7 @@ namespace DeskDexCore.Controllers
                 DeskID = station.ID,
                 WorkStyle = station.Type.Name,
                 LastUpdate = (station.LastCheckin != null) ? FormatAge(station.LastCheckin.LastUpdate) : String.Empty,
-                UserName = station.LastCheckin?.Username,
+                UserName = station.LastCheckin?.Display,
                 Capacity = station.Capacity,
                 Equipment = new List<string>(),
                 Location = station.Location,
@@ -126,9 +126,9 @@ namespace DeskDexCore.Controllers
                 var checkin = new Checkin
                 {
                     LastUpdate = submitTime,
-                    Username = input.acid
+                    Username = input.acid,
+                    Display = input.display
                 };
-
 
                 //// Update checkin table
                 // check existing entries with same userID
@@ -139,6 +139,7 @@ namespace DeskDexCore.Controllers
                 {
                     // update time
                     oldCheckin.LastUpdate = submitTime;
+                    oldCheckin.Display = input.display;
 
                     // clear out old station reg
                     var prevReg = from s in db.Stations where s.LastCheckin.ID == oldCheckin.ID select s;
@@ -221,7 +222,7 @@ namespace DeskDexCore.Controllers
             var st = db.Stations.Include(s => s.LastCheckin).Include(s => s.Floor).Where(s => s.LastCheckin.Username.Contains(term)).Where(s => s.Floor != null).ToList();
             return st.Select(s => new SearchLink
             {
-                Display = s.LastCheckin.Username,
+                Display = s.LastCheckin.Display,
                 Link = Url.Action("Map", "Home", null) + "?floor=" + s.Floor.ID.ToString() + "&station=" + s.ID.ToString(),
                 SubText = "Last seen " + FormatAge(s.LastCheckin.LastUpdate) + " ago"
             }).ToList();

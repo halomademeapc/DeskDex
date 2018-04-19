@@ -18,5 +18,7 @@ namespace DeskDexCore.Models
         [Required]
         [Display(Name = "Last Check-in")]
         public DateTime LastUpdate { get; set; }
+
+        public string Display { get; set; }
     }
 }

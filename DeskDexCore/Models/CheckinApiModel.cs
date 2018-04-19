@@ -9,5 +9,6 @@ namespace DeskDexCore.Models
     {
         public string address { get; set; }
         public string acid { get; set; }
+        public string display { get; set; }
     }
 }
