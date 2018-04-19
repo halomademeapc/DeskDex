@@ -219,7 +219,7 @@ namespace DeskDexCore.Controllers
         private List<SearchLink> FindUsers(string term)
         {
             // look for names on checkins
-            var st = db.Stations.Include(s => s.LastCheckin).Include(s => s.Floor).Where(s => s.LastCheckin.Username.Contains(term)).Where(s => s.Floor != null).ToList();
+            var st = db.Stations.Include(s => s.LastCheckin).Include(s => s.Floor).Where(s => s.LastCheckin.Display.Contains(term)).Where(s => s.Floor != null).ToList();
             return st.Select(s => new SearchLink
             {
                 Display = s.LastCheckin.Display,
