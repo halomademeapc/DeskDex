@@ -36,3 +36,8 @@ a:hover {
     background-position: center;
     background-attachment: fixed;
 }
+.jcrop-handle {
+    background-color: #b42f26 !important;
+    box-shadow: 0px 0px 3px #b42f26;
+    opacity: 0.8 !important;
+}

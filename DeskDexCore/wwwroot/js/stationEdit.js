@@ -37,11 +37,13 @@ function loadMap(floor) {
         image.removeAttr("style");
         image.attr("width", "100%");
         mapContainer.append(image);
-        image.Jcrop({
-            onChange: setCoords,
-            onSelect: setCoords,
-            bgColor: 'white',
-            setSelect: [image.width() * parseFloat($("#Station_x1").val()), image.height() * parseFloat($("#Station_y1").val()), image.width() * parseFloat($("#Station_x2").val()), image.height() * parseFloat($("#Station_y2").val())],
+        image.on("load", function () {
+            $(this).Jcrop({
+                onChange: setCoords,
+                onSelect: setCoords,
+                bgColor: 'white',
+                setSelect: [image.width() * parseFloat($("#Station_x1").val()), image.height() * parseFloat($("#Station_y1").val()), image.width() * parseFloat($("#Station_x2").val()), image.height() * parseFloat($("#Station_y2").val())],
+            });
         });
     });
 }

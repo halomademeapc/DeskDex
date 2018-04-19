@@ -158,7 +158,7 @@ namespace DeskDexCore.Controllers
             }
             var stationViewModel = new StationViewModel
             {
-                Station = db.Stations.Where(s => s.ID == id).Include(s => s.StationEquipments).First()
+                Station = db.Stations.Where(s => s.ID == id).Include(s => s.StationEquipments).Include(s => s.Floor).First()
 
             };
             if (stationViewModel.Station == null)
@@ -186,6 +186,8 @@ namespace DeskDexCore.Controllers
                 Text = f.Name,
                 Value = f.ID.ToString()
             });
+
+            ViewBag.DefaultFloor = stationViewModel.Station.Floor.ID;
 
             return View(stationViewModel);
         }
