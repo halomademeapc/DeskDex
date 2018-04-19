@@ -10,3 +10,29 @@
 #searchClear {
     margin-left: -2em;
 }
+.dropdown-item.active, .dropdown-item:active {
+    background-color: #DDDDDD;
+}
+a:hover {
+    color: #7a1c16;
+}
+.color-accent {
+    background-color: #1F252B;
+}
+.underflow {
+    margin-top: -3.5rem;
+}
+.full-viewport {
+    min-height: 100vh;
+    padding-top: 26.5em;
+    margin-top: -15em;
+}
+.pt-8 {
+    padding-top: 3rem!important;
+}
+.background-cover {
+    background-size: cover;
+    background-repeat: no-repeat;
+    background-position: center;
+    background-attachment: fixed;
+}

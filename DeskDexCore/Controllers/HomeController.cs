@@ -24,7 +24,13 @@ namespace DeskDexCore.Controllers
         [HttpGet("")]
         public IActionResult Index()
         {
-            return View();
+            var stats = new HomeViewModel
+            {
+                UserCount = db.Checkins.Where(c => (DateTime.Now - c.LastUpdate).TotalHours < 2).ToList().Count(),
+                StationCount = db.Stations.Where(s => s.Location != "Unknown").ToList().Count()
+            };
+            stats.OpenRatio = stats.StationCount > 0 ? ((stats.UserCount * 100) / (stats.StationCount)) : 100;
+            return View(stats);
         }
 
         [HttpGet("Map")]
