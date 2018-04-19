@@ -1,4 +1,4 @@
-$adapter = Get-WmiObject win32_networkadapter | Where-Object {$_.Name -like "Realtek USB GbE Family Controller" -and $_.Speed -gt 0} | select-object -first 1
+$adapter = Get-WmiObject win32_networkadapter | Where-Object {$_.Speed -gt 0} | select-object -first 1
 
 if ($adapter) {
     $u = whoami
