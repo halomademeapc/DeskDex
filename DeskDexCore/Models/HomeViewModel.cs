@@ -19,7 +19,9 @@ namespace DeskDexCore.Models
         private static List<string> _homeImages = new List<string>
         {
             "/images/homebg.jpg",
-            "/images/homebg1.jpg"
+            "/images/homebg1.jpg",
+            "/images/homebg2.jpg",
+            "/images/homebg3.jpg"
         };
     }
 }
