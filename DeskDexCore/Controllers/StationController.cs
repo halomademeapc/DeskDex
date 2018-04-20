@@ -205,6 +205,7 @@ namespace DeskDexCore.Controllers
                 {
                     db.StationEquipments.Remove(old);
                 }
+                db.SaveChanges();
 
                 var station = stationViewModel.Station;
 
