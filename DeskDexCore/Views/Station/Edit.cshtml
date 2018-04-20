@@ -104,12 +104,12 @@
 </div>
 
 @section Scripts {
-        <script>
-            $(document).ready(function () {
-                $("#selectedFloor").val(@(Model.Station.Floor.ID));
-                $("#selectedWorkStyle").val(@(Model.Station.Type.ID))
-            });
-        </script>
+    <script>
+        $(document).ready(function () {
+            $("#selectedFloor").val(@(Model.Station.Floor != null ? Model.Station.Floor.ID.ToString() : String.Empty));
+            $("#selectedWorkStyle").val(@(Model.Station.Type != null ? Model.Station.Type.ID.ToString() : String.Empty))
+        });
+    </script>
     <script src="@Url.Content("~/js/jquery.Jcrop.min.js")"></script>
     <script src="@Url.Content("~/js/jquery.color.js")"></script>
     @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
