@@ -133,13 +133,16 @@ function checkDetailStatus() {
                 if (tar.data("stationID") > 0) {
                     updateDetails(tar.data("stationID"));
                     $("#roomDetails").slideDown();
+                    $("#mapLegend").slideUp();
                 }
             } catch (e) {
                 //console.log(e);
                 $("#roomDetails").slideUp();
+                $("#mapLegend").slideDown();
             }
         } else {
             $("#roomDetails").slideUp();
+            $("#mapLegend").slideDown();
         }
     }, 700);
 }
