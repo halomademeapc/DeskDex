@@ -104,14 +104,12 @@
 </div>
 
 @section Scripts {
-    @if(ViewBag.DefaultFloor != null)
-    {
         <script>
             $(document).ready(function () {
-                $("#selectedFloor").val(@(ViewBag.DefaultFloor));
+                $("#selectedFloor").val(@(Model.Station.Floor.ID));
+                $("#selectedWorkStyle").val(@(Model.Station.Type.ID))
             });
         </script>
-    }
     <script src="@Url.Content("~/js/jquery.Jcrop.min.js")"></script>
     <script src="@Url.Content("~/js/jquery.color.js")"></script>
     @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
