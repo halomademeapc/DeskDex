@@ -187,8 +187,6 @@ namespace DeskDexCore.Controllers
                 Value = f.ID.ToString()
             });
 
-            ViewBag.DefaultFloor = stationViewModel.Station.Floor.ID;
-
             return View(stationViewModel);
         }
 
@@ -205,6 +203,7 @@ namespace DeskDexCore.Controllers
                 {
                     db.StationEquipments.Remove(old);
                 }
+                db.SaveChanges();
 
                 var station = stationViewModel.Station;
 
