@@ -51,6 +51,8 @@
     position: absolute;
     display: block;
     pointer-events: none;
+    font-weight: 200;
+    font-size: .8em;
 }
 
 .occupied {
