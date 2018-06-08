@@ -90,11 +90,11 @@ function loadMap(floor) {
     });
 }
 
-function createStation(stationViewModel) {
+createStation = (stationViewModel => {
     var stationDiv = $(document.createElement('div'));
     var size = [(stationViewModel.x2 - stationViewModel.x1) * 100, (stationViewModel.y2 - stationViewModel.y1) * 100];
     stationDiv.addClass("stationDiv");
-    stationDiv.addClass(("workstyle-" + stationViewModel.workStyle).toLowerCase().replace(" ", "-"));
+    stationDiv.addClass(("workstyle-" + stationViewModel.workStyle).toLowerCase().replace(/ /g, "-"));
     stationDiv.css("width", size[0] + "%");
     stationDiv.css("height", size[1] + "%");
     stationDiv.css("left", (stationViewModel.x1 * 100) + "%");
@@ -122,7 +122,7 @@ function createStation(stationViewModel) {
     })
 
     return stationDiv;
-}
+});
 
 function checkDetailStatus() {
     setTimeout(function () {
@@ -181,7 +181,7 @@ function updateDetails(stationID) {
     });
 }
 
-function getUrlParams(prop) {
+getUrlParams(prop => {
     var params = {};
     var search = decodeURIComponent(window.location.href.slice(window.location.href.indexOf('?') + 1));
     var definitions = search.split('&');
@@ -192,4 +192,4 @@ function getUrlParams(prop) {
     });
 
     return (prop && prop in params) ? params[prop] : params;
-}
+});
