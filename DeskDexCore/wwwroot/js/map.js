@@ -103,7 +103,8 @@ createStation = (stationViewModel => {
     stationDiv.css("height", size[1] + "%");
     stationDiv.css("left", (stationViewModel.x1 * 100) + "%");
     stationDiv.css("top", (stationViewModel.y1 * 100) + "%");
-    stationDiv.data("targetsize", .5);
+    stationDiv.data("targetsize", .05);
+    stationDiv.data("duration", 2000);
     stationDiv.data("stationID", stationViewModel.deskID);
     if (stationViewModel.occupied == true) {
         stationDiv.addClass("occupied");
