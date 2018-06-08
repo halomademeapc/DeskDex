@@ -73,7 +73,14 @@ namespace DeskDexCore.Controllers
                         {
                             // get file name
                             string _FileName = $@"{Guid.NewGuid()}.svg";
-                            string _Path = Path.Combine(_hostingEnvironment.WebRootPath, "Floors", _FileName);
+                            string _Folder = Path.Combine(_hostingEnvironment.WebRootPath, "Floors");
+                            string _Path = Path.Combine(_Folder, _FileName);
+
+                            // make folder if needed
+                            if (!Directory.Exists(_Folder))
+                            {
+                                Directory.CreateDirectory(_Folder);
+                            }
 
                             using (var stream = new FileStream(_Path, FileMode.Create))
                             {
