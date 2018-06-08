@@ -29,6 +29,10 @@ $(document).ready(function () {
         fs.val(defaultFloor);
     }
     loadMap(fs.val());
+
+    $(".legendtoggle").on("click", function () {
+        $(".workstyle-" + $(this).data("target")).fadeToggle();
+    });
 });
 
 $(document).on('mousemove', function (e) {
@@ -181,7 +185,7 @@ function updateDetails(stationID) {
     });
 }
 
-getUrlParams(prop => {
+getUrlParams = (prop => {
     var params = {};
     var search = decodeURIComponent(window.location.href.slice(window.location.href.indexOf('?') + 1));
     var definitions = search.split('&');

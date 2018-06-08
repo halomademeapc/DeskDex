@@ -56,3 +56,7 @@
 .occupied {
     opacity: 0.3;
 }
+
+.legendtoggle {
+    pointer-events: auto;
+}
