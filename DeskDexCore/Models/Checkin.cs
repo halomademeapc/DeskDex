@@ -13,12 +13,18 @@ namespace DeskDexCore.Models
         public int ID { get; set; }
 
         [Required]
+        [StringLength(25)]
+        [MaxLength(25)]
+        [Column(TypeName = "VARCHAR(25)")]
         public string Username { get; set; }
 
         [Required]
         [Display(Name = "Last Check-in")]
         public DateTime LastUpdate { get; set; }
 
+        [StringLength(50)]
+        [MaxLength(50)]
+        [Column(TypeName = "VARCHAR(50)")]
         public string Display { get; set; }
     }
 }

@@ -14,15 +14,20 @@ namespace DeskDexCore.Models
 
         [Display(Name = "MAC Address")]
         [Required]
+        [MaxLength(30)]
+        [StringLength(30)]
+        [Column(TypeName = "VARCHAR(30)")]
         public string PhysicalAddress { get; set; }
 
         [Display(Name = "Station Number")]
         [Required]
+        [StringLength(20)]
+        [MaxLength(20)]
+        [Column(TypeName = "VARCHAR(20)")]
         public string Location { get; set; }
 
         [Display(Name = "Available Equipment")]
         public virtual ICollection<StationEquipment> StationEquipments { get; set; }
-        //public virtual ICollection<Equipment> Equipment { get; set; }
 
         public virtual Checkin LastCheckin { get; set; }
 
@@ -51,6 +56,9 @@ namespace DeskDexCore.Models
         public virtual Floor Floor { get; set; }
 
         [Display(Name = "Picture")]
+        [StringLength(80)]
+        [MaxLength(80)]
+        [Column(TypeName = "VARCHAR(80)")]
         public string FilePath { get; set; }
     }
 

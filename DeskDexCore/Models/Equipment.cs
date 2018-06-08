@@ -9,17 +9,20 @@ namespace DeskDexCore.Models
 {
     public class Equipment
     {
-        /*public Equipment()
-        {
-            this.Stations = new HashSet<Station>();
-        }*/
-
         [Key, DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public int ID { get; set; }
+
         [Required]
+        [StringLength(30)]
+        [MaxLength(30)]
+        [Column(TypeName = "VARCHAR(30)")]
         public string Name { get; set; }
+
+        [StringLength(200)]
+        [MaxLength(200)]
+        [Column(TypeName = "VARCHAR(200)")]
         public string Description { get; set; }
-        //public virtual ICollection<Station> Stations { get; set; }
+
         public virtual ICollection<StationEquipment> StationEquipments { get; set; }
     }
 }

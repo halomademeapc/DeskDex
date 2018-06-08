@@ -14,6 +14,9 @@ namespace DeskDexCore.Models
         public int ID { get; set; }
 
         [Required]
+        [Column(TypeName = "VARCHAR(30)")]
+        [MaxLength(30)]
+        [StringLength(30)]
         public string Name { get; set; }
 
         [Required]
