@@ -59,4 +59,9 @@
 
 .legendtoggle {
     pointer-events: auto;
+    cursor: pointer;
+}
+
+.stationDiv {
+    border-radius: 0.2em;
 }
