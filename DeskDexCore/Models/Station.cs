@@ -52,6 +52,10 @@ namespace DeskDexCore.Models
         [Range(0.0, 1)]
         public float y2 { get; set; }
 
+        [Display(Name = "Rotation")]
+        [Range(0, 360)]
+        public int Angle { get; set; }
+
         [Display(Name = "Floor")]
         public virtual Floor Floor { get; set; }
 
