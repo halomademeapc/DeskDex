@@ -45,25 +45,25 @@
             <div>@Html.DropDownListFor(model => model.selectedFloor, Model.AllFloors, new { @class = "form-control" })</div>
         </div>
 
-        <div class="md-form form-group col-md-4 d-none">
+        <div class="md-form form-group col-md-4 d-noneb">
             @Html.EditorFor(model => model.Station.x1, new { htmlAttributes = new { @class = "form-control" } })
             @Html.LabelFor(model => model.Station.x1)
             @Html.ValidationMessageFor(model => model.Station.x1, "", new { @class = "text-danger" })
         </div>
 
-        <div class="md-form form-group col-md-4 d-none">
+        <div class="md-form form-group col-md-4 d-noneb">
             @Html.EditorFor(model => model.Station.y1, new { htmlAttributes = new { @class = "form-control" } })
             @Html.LabelFor(model => model.Station.y1)
             @Html.ValidationMessageFor(model => model.Station.y1, "", new { @class = "text-danger" })
         </div>
 
-        <div class="md-form form-group col-md-4 d-none">
+        <div class="md-form form-group col-md-4 d-noneb">
             @Html.EditorFor(model => model.Station.x2, new { htmlAttributes = new { @class = "form-control" } })
             @Html.LabelFor(model => model.Station.x2)
             @Html.ValidationMessageFor(model => model.Station.x2, "", new { @class = "text-danger" })
         </div>
 
-        <div class="md-form form-group col-md-4 d-none">
+        <div class="md-form form-group col-md-4 d-noneb">
             @Html.EditorFor(model => model.Station.y2, new { htmlAttributes = new { @class = "form-control" } })
             @Html.LabelFor(model => model.Station.y2)
             @Html.ValidationMessageFor(model => model.Station.y2, "", new { @class = "text-danger" })
@@ -105,6 +105,7 @@
         <script src="@Url.Content("~/js/jquery.color.js")"></script>
         @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
         <script src="@Url.Content("~/js/cropper.min.js")"></script>
+        <script src="@Url.Content("~/js/jQueryRotate.min.js")"></script>
         <script src="@Url.Content("~/js/stationEdit.js")"></script>
     }
 
