@@ -51,8 +51,19 @@
     position: absolute;
     display: block;
     pointer-events: none;
+    font-weight: 200;
+    font-size: .8em;
 }
 
 .occupied {
     opacity: 0.3;
+}
+
+.legendtoggle {
+    pointer-events: auto;
+    cursor: pointer;
+}
+
+.stationDiv {
+    border-radius: 0.2em;
 }

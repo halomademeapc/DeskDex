@@ -35,7 +35,7 @@
             <!-- legend -->
             @foreach (var item in Model.AllWorkStyles)
             {
-                <div>
+                <div class="legendtoggle" data-target="@item.Name.ToLower().Replace(" ","-")">
                     <small>@item.Name</small>
                     <span class="workstyle-@item.Name.ToLower().Replace(" ","-") px-2 my-1"></span>
                 </div>

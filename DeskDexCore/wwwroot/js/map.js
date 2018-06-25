@@ -29,6 +29,10 @@ $(document).ready(function () {
         fs.val(defaultFloor);
     }
     loadMap(fs.val());
+
+    $(".legendtoggle").on("click", function () {
+        $(".workstyle-" + $(this).data("target")).fadeToggle();
+    });
 });
 
 $(document).on('mousemove', function (e) {
@@ -99,7 +103,8 @@ createStation = (stationViewModel => {
     stationDiv.css("height", size[1] + "%");
     stationDiv.css("left", (stationViewModel.x1 * 100) + "%");
     stationDiv.css("top", (stationViewModel.y1 * 100) + "%");
-    stationDiv.data("targetsize", .5);
+    stationDiv.data("targetsize", .05);
+    stationDiv.data("duration", 2000);
     stationDiv.data("stationID", stationViewModel.deskID);
     if (stationViewModel.occupied == true) {
         stationDiv.addClass("occupied");
@@ -181,7 +186,7 @@ function updateDetails(stationID) {
     });
 }
 
-getUrlParams(prop => {
+getUrlParams = (prop => {
     var params = {};
     var search = decodeURIComponent(window.location.href.slice(window.location.href.indexOf('?') + 1));
     var definitions = search.split('&');
