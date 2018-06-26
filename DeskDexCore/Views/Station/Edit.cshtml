@@ -73,12 +73,7 @@
             @Html.ValidationMessageFor(model => model.Station.y2, "", new { @class = "text-danger" })
         </div>
 
-        <div class="col-md-12">
-            <label>Position</label>
-            <div id="mapContainer">
-                <img src="@(Url.Content("~/images/svg/loading.svg"))" alt="Floor Map" id="mapImage" />
-            </div>
-        </div>
+        @Html.Partial("_MapSelect")
 
         <div class="form-group col-md-4">
             @Html.LabelFor(model => model.selectedWorkStyle, "Type")
@@ -110,12 +105,12 @@
             $("#selectedWorkStyle").val(@(Model.Station.Type != null ? Model.Station.Type.ID.ToString() : String.Empty))
         });
     </script>
-    <script src="@Url.Content("~/js/jquery.Jcrop.min.js")"></script>
     <script src="@Url.Content("~/js/jquery.color.js")"></script>
     @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+    <script src="@Url.Content("~/js/cropper.min.js")"></script>
     <script src="@Url.Content("~/js/stationEdit.js")"></script>
 }
 
 @section Styles {
-    <link href="@Url.Content("~/css/jquery.Jcrop.min.css")" rel="stylesheet" />
+    <link href="@Url.Content("~/css/cropper.min.css")" rel="stylesheet" />
 }

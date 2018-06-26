@@ -44,3 +44,6 @@ a:hover {
 .navbar {
     z-index: 1040;
 }
+.imageSelect {
+    max-width: 100%;
+}
