@@ -62,6 +62,7 @@
 .legendtoggle {
     pointer-events: auto;
     cursor: pointer;
+    white-space: nowrap;
 }
 
 .stationDiv {
