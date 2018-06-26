@@ -10,6 +10,7 @@ namespace DeskDexCore.Models
     public class Equipment
     {
         [Key, DatabaseGenerated(DatabaseGeneratedOption.Identity)]
+        [Column("EquipmentTypeID")]
         public int ID { get; set; }
 
         [Required]
