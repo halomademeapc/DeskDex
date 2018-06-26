@@ -20,7 +20,7 @@ namespace DeskDexCore.Models
             modelBuilder.Entity<Checkin>().ToTable("Checkins");
             modelBuilder.Entity<Station>().ToTable("Stations");
             modelBuilder.Entity<WorkStyle>().ToTable("WorkStyles");
-            modelBuilder.Entity<Equipment>().ToTable("Equipments");
+            modelBuilder.Entity<Equipment>().ToTable("EquipmentTypes");
             modelBuilder.Entity<StationEquipment>().ToTable("StationEquipments");
 
             modelBuilder.Entity<StationEquipment>()
