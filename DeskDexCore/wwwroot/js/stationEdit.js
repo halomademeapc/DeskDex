@@ -163,30 +163,37 @@ function loadMap(floor) {
         // load background svg
         console.log("loading floor " + floor);
         var image = $(".imageSelect");
-        var options = {
-            background: false,
-            modal: false,
-            scalable: false,
-            zoomOnWheel: false,
-            dragMode: "crop",
-            crop: function () {
-                if (!loaded) {
-                    loaded = true;
-                    initCrop();
-                }
-            },
-            viewMode: 1
-        };
+        if (!loaded) {
+            var options = {
+                background: false,
+                modal: false,
+                scalable: false,
+                zoomOnWheel: false,
+                dragMode: "crop",
+                crop: function () {
+                    if (!loaded) {
+                        loaded = true;
+                        initCrop();
+                    }
+                },
+                viewMode: 1
+            };
 
-        image.attr('src', data.filePath);
-        image.removeAttr("style");
-        image.attr("max-width", "100%");
-        image.on("load", function () {
-            $("#imageSelect").on("cropend", function (e) {
-                console.log("cropend triggered");
-                updateFields();
-            }).cropper(options);
-        });
+            image.attr('src', data.filePath);
+            image.removeAttr("style");
+            image.attr("max-width", "100%");
+            image.on("load", function () {
+                $("#imageSelect").on("cropend", function (e) {
+                    console.log("cropend triggered");
+                    updateFields();
+                }).cropper(options);
+            });
+        }
+        else {
+            console.log("replacing image");
+            image.cropper("replace", data.filePath);
+            initCrop();
+        }
 
     });
 }
