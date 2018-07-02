@@ -16,7 +16,7 @@ $(document).ready(function () {
     var $image = $(".imageSelect");
 
     $("#imageZoomout").on("click", function () {
-        $image.cropper("zoom", - 0.2);
+        $image.cropper("zoom", -0.2);
         initCrop();
     });
     $("#imageZoomin").on("click", function () {
@@ -28,7 +28,10 @@ $(document).ready(function () {
         var imageData = $image.cropper('getImageData');
         var xScale = containerData.width / imageData.naturalWidth;
         var yScale = containerData.height / imageData.naturalHeight;
-        console.log({ xScale: xScale, yScale: yScale });
+        console.log({
+            xScale: xScale,
+            yScale: yScale
+        });
         $image.cropper("zoomTo", xScale > yScale ? yScale : xScale);
         initCrop();
     });
@@ -80,22 +83,27 @@ function initCrop() {
     setCrop(getCoords());
 }
 
-getCoords = () => ({
-    left: $("#Station_x1").val(),
-    right: $("#Station_x2").val(),
-    top: $("#Station_y1").val(),
-    bottom: $("#Station_y2").val()
-});
+function getCoords() {
+    return {
+        left: $("#Station_x1").val(),
+        right: $("#Station_x2").val(),
+        top: $("#Station_y1").val(),
+        bottom: $("#Station_y2").val()
+    };
+}
 
 function setCrop(c) {
     var $image = $(".imageSelect");
     var target = convertDbCoordsToCropper(c);
-    console.log({ input: c, target: target });
+    console.log({
+        input: c,
+        target: target
+    });
 
     $image.cropper("setCropBoxData", target);
 }
 
-convertDbCoordsToCropper = (c) => {
+function convertDbCoordsToCropper(c) {
     var $image = $(".imageSelect");
     var imageData = $image.cropper("getImageData");
     var canvasData = $image.cropper("getCanvasData");
@@ -113,7 +121,7 @@ convertDbCoordsToCropper = (c) => {
     };
 }
 
-updateFields = () => {
+function updateFields() {
     var image = $(".imageSelect");
     var imageData = image.cropper('getImageData');
     var cropData = image.cropper('getCropBoxData');
@@ -188,8 +196,7 @@ function loadMap(floor) {
                     updateFields();
                 }).cropper(options);
             });
-        }
-        else {
+        } else {
             console.log("replacing image");
             image.cropper("replace", data.filePath);
             initCrop();

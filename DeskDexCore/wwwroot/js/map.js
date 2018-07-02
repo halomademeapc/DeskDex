@@ -94,7 +94,7 @@ function loadMap(floor) {
     });
 }
 
-createStation = (stationViewModel => {
+function createStation(stationViewModel) {
     var stationDiv = $(document.createElement('div'));
     var size = [(stationViewModel.x2 - stationViewModel.x1) * 100, (stationViewModel.y2 - stationViewModel.y1) * 100];
     stationDiv.addClass("stationDiv");
@@ -127,7 +127,7 @@ createStation = (stationViewModel => {
     })
 
     return stationDiv;
-});
+};
 
 function checkDetailStatus() {
     setTimeout(function () {
@@ -186,7 +186,7 @@ function updateDetails(stationID) {
     });
 }
 
-getUrlParams = (prop => {
+function getUrlParams(prop) {
     var params = {};
     var search = decodeURIComponent(window.location.href.slice(window.location.href.indexOf('?') + 1));
     var definitions = search.split('&');
@@ -197,4 +197,4 @@ getUrlParams = (prop => {
     });
 
     return (prop && prop in params) ? params[prop] : params;
-});
+};
