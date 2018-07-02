@@ -16,7 +16,7 @@ $(document).ready(function () {
     var $image = $(".imageSelect");
 
     $("#imageZoomout").on("click", function () {
-        $image.cropper("zoom", - 0.2);
+        $image.cropper("zoom", -0.2);
         initCrop();
     });
     $("#imageZoomin").on("click", function () {
@@ -28,7 +28,10 @@ $(document).ready(function () {
         var imageData = $image.cropper('getImageData');
         var xScale = containerData.width / imageData.naturalWidth;
         var yScale = containerData.height / imageData.naturalHeight;
-        console.log({ xScale: xScale, yScale: yScale });
+        console.log({
+            xScale: xScale,
+            yScale: yScale
+        });
         $image.cropper("zoomTo", xScale > yScale ? yScale : xScale);
         initCrop();
     });
@@ -80,22 +83,27 @@ function initCrop() {
     setCrop(getCoords());
 }
 
-getCoords = () => ({
-    left: $("#Station_x1").val(),
-    right: $("#Station_x2").val(),
-    top: $("#Station_y1").val(),
-    bottom: $("#Station_y2").val()
-});
+function getCoords() {
+    return {
+        left: $("#Station_x1").val(),
+        right: $("#Station_x2").val(),
+        top: $("#Station_y1").val(),
+        bottom: $("#Station_y2").val()
+    };
+}
 
 function setCrop(c) {
     var $image = $(".imageSelect");
     var target = convertDbCoordsToCropper(c);
-    console.log({ input: c, target: target });
+    console.log({
+        input: c,
+        target: target
+    });
 
     $image.cropper("setCropBoxData", target);
 }
 
-convertDbCoordsToCropper = (c) => {
+function convertDbCoordsToCropper(c) {
     var $image = $(".imageSelect");
     var imageData = $image.cropper("getImageData");
     var canvasData = $image.cropper("getCanvasData");
@@ -113,7 +121,7 @@ convertDbCoordsToCropper = (c) => {
     };
 }
 
-updateFields = () => {
+function updateFields() {
     var image = $(".imageSelect");
     var imageData = image.cropper('getImageData');
     var cropData = image.cropper('getCropBoxData');
@@ -163,30 +171,36 @@ function loadMap(floor) {
         // load background svg
         console.log("loading floor " + floor);
         var image = $(".imageSelect");
-        var options = {
-            background: false,
-            modal: false,
-            scalable: false,
-            zoomOnWheel: false,
-            dragMode: "crop",
-            crop: function () {
-                if (!loaded) {
-                    loaded = true;
-                    initCrop();
-                }
-            },
-            viewMode: 1
-        };
+        if (!loaded) {
+            var options = {
+                background: false,
+                modal: false,
+                scalable: false,
+                zoomOnWheel: false,
+                dragMode: "crop",
+                crop: function () {
+                    if (!loaded) {
+                        loaded = true;
+                        initCrop();
+                    }
+                },
+                viewMode: 1
+            };
 
-        image.attr('src', data.filePath);
-        image.removeAttr("style");
-        image.attr("max-width", "100%");
-        image.on("load", function () {
-            $("#imageSelect").on("cropend", function (e) {
-                console.log("cropend triggered");
-                updateFields();
-            }).cropper(options);
-        });
+            image.attr('src', data.filePath);
+            image.removeAttr("style");
+            image.attr("max-width", "100%");
+            image.on("load", function () {
+                $("#imageSelect").on("cropend", function (e) {
+                    console.log("cropend triggered");
+                    updateFields();
+                }).cropper(options);
+            });
+        } else {
+            console.log("replacing image");
+            image.cropper("replace", data.filePath);
+            initCrop();
+        }
 
     });
 }
