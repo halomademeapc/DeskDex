@@ -67,4 +67,5 @@
 
 .stationDiv {
     border-radius: 0.2em;
+    cursor: pointer;
 }
