@@ -1,10 +1,14 @@
 ﻿let urlChanged = false;
+let activeStation = 0;
+let activeFloor = 0;
+
 $(document).ready(function () {
     //console.log("let's do this!");
     var fs = $("#floorSelect");
 
     fs.on("change", function () {
         var targetFloor = $("#floorSelect").val();
+        resetZoom();
         loadMap(targetFloor);
     });
 
@@ -36,6 +40,9 @@ $(document).ready(function () {
     $(".legendtoggle").on("click", function () {
         $(".workstyle-" + $(this).data("target")).fadeToggle();
     });
+
+    // auto-refresh every 60 seconds
+    window.setInterval(refreshData, 60000);
 });
 
 $(document).on('mousemove', function (e) {
@@ -51,7 +58,7 @@ function setOverlay() {
 }
 
 function loadMap(floor) {
-    resetZoom();
+    activeFloor = parseInt(floor);
     // set cookie to remember current floor
     document.cookie = "mapFloor=" + floor + ";";
     if (urlChanged) {
@@ -61,9 +68,6 @@ function loadMap(floor) {
     }
 
     var olDiv = $("#overlays");
-
-    //clear existing elements
-    olDiv.empty();
 
     // call API to get desk locations on this floor
     $.getJSON('/api/floor/' + floor, function (data) {
@@ -78,6 +82,9 @@ function loadMap(floor) {
             targetStation = parseInt(urlParams.get("station"));
             //console.log("targeting " + targetStation);
         }
+
+        //clear existing elements
+        olDiv.empty();
 
         // load stations
         for (var i = 0; i < data.stations.length; i++) {
@@ -126,6 +133,7 @@ function createStation(stationViewModel) {
         $(this).zoomTo(settings);
         //checkDetailStatus();
         showDetails($(this).data("stationID"));
+        activeStation = parseInt($(this).data("stationID"));
         event.stopPropagation();
     });
 
@@ -141,6 +149,15 @@ function createStation(stationViewModel) {
     return stationDiv;
 };
 
+function refreshData() {
+    if (activeFloor > 0) {
+        loadMap(activeFloor);
+        if (activeStation > 0) {
+            updateDetails(activeStation);
+        }
+    }
+}
+
 function showDetails(stationID) {
     updateDetails(stationID);
     $("#roomDetails").slideDown();
@@ -153,6 +170,7 @@ function hideDetails() {
 }
 
 function resetZoom() {
+    activeStation = 0;
     var settings = {
         duration: 600,
         easing: "ease-in-out",
