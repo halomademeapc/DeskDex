@@ -9,14 +9,17 @@ $(document).ready(function () {
     });
 
     $("#mapImage").on("dragstart", function (event) {
+        //console.log("prevent drag");
         event.preventDefault();
     })
 
     setOverlay();
     $(window).resize(setOverlay);
 
-    $(".zoomViewport").on("click", checkDetailStatus);
-    $("#overlays").on("click", checkDetailStatus);
+    $(".zoomViewport").on("click", function () {
+        hideDetails();
+        resetZoom();
+    });
 
     var defaultFloor = fs.data("default")
     // check querystring
@@ -48,6 +51,7 @@ function setOverlay() {
 }
 
 function loadMap(floor) {
+    resetZoom();
     // set cookie to remember current floor
     document.cookie = "mapFloor=" + floor + ";";
     if (urlChanged) {
@@ -89,7 +93,6 @@ function loadMap(floor) {
         //$(".queriedStation").zoomTo();
         setTimeout(function () {
             $(".queriedStation").trigger("click");
-            $(".queriedStation").trigger("click");
         }, 600);
     });
 }
@@ -103,18 +106,27 @@ function createStation(stationViewModel) {
     stationDiv.css("height", size[1] + "%");
     stationDiv.css("left", (stationViewModel.x1 * 100) + "%");
     stationDiv.css("top", (stationViewModel.y1 * 100) + "%");
-    stationDiv.data("targetsize", .05);
-    stationDiv.data("duration", 2000);
+    //stationDiv.data("targetsize", .05);
+    //stationDiv.data("duration", 2000);
     stationDiv.data("stationID", stationViewModel.deskID);
     if (stationViewModel.occupied == true) {
         stationDiv.addClass("occupied");
     }
 
     $(stationDiv).on("click", function (event) {
-        //console.log("station clicked");
+        //console.log("station " + $(this).data("stationID") + " clicked");
+        var settings = {
+            targetsize: .05,
+            duration: 2000,
+            easing: "ease-in-out",
+            root: $(".zoomViewport")
+        }
         $("#followTooltip").fadeOut(200);
-        $(this).zoomTarget();
-        checkDetailStatus();
+        //$(this).zoomTarget();
+        $(this).zoomTo(settings);
+        //checkDetailStatus();
+        showDetails($(this).data("stationID"));
+        event.stopPropagation();
     });
 
     $(stationDiv).on("mouseover", function (event) {
@@ -129,27 +141,24 @@ function createStation(stationViewModel) {
     return stationDiv;
 };
 
-function checkDetailStatus() {
-    setTimeout(function () {
-        //console.log("cds called");
-        var tar = $(".stationDiv.selectedZoomTarget");
-        if (tar.length > 0) {
-            try {
-                if (tar.data("stationID") > 0) {
-                    updateDetails(tar.data("stationID"));
-                    $("#roomDetails").slideDown();
-                    $("#mapLegend").slideUp();
-                }
-            } catch (e) {
-                //console.log(e);
-                $("#roomDetails").slideUp();
-                $("#mapLegend").slideDown();
-            }
-        } else {
-            $("#roomDetails").slideUp();
-            $("#mapLegend").slideDown();
-        }
-    }, 700);
+function showDetails(stationID) {
+    updateDetails(stationID);
+    $("#roomDetails").slideDown();
+    $("#mapLegend").slideUp();
+}
+
+function hideDetails() {
+    $("#roomDetails").slideUp();
+    $("#mapLegend").slideDown();
+}
+
+function resetZoom() {
+    var settings = {
+        duration: 600,
+        easing: "ease-in-out",
+        root: $(".zoomViewport")
+    }
+    $(".zoomViewport").zoomTo(settings);
 }
 
 function updateDetails(stationID) {
