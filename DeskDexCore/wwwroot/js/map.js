@@ -97,6 +97,8 @@ function loadMap(floor) {
             }
         }
 
+        setActiveStation();
+
         //$(".queriedStation").zoomTo();
         setTimeout(function () {
             $(".queriedStation").trigger("click");
@@ -129,13 +131,12 @@ function createStation(stationViewModel) {
             root: $(".zoomViewport")
         }
         $("#followTooltip").fadeOut(200);
-        $(".stationDiv").removeClass("active");
-        $(this).addClass("active");
         //$(this).zoomTarget();
         $(this).zoomTo(settings);
         //checkDetailStatus();
         showDetails($(this).data("stationID"));
         activeStation = parseInt($(this).data("stationID"));
+        setActiveStation();
         event.stopPropagation();
     });
 
@@ -173,6 +174,7 @@ function hideDetails() {
 
 function resetZoom() {
     activeStation = 0;
+    $(".stationDiv").removeClass("active");
     var settings = {
         duration: 600,
         easing: "ease-in-out",
@@ -181,9 +183,17 @@ function resetZoom() {
     $(".zoomViewport").zoomTo(settings);
 }
 
+function setActiveStation() {
+    $(".stationDiv").removeClass("active");
+    $(".stationDiv").filter(function () {
+        return $(this).data("stationID") == activeStation
+    }).addClass("active");
+}
+
 function updateDetails(stationID) {
     $.getJSON('/api/Desk/' + stationID, function (data) {
         //console.log("loaded details for station " + data.deskID);
+        setActiveStation();
 
         $("#rdLocation").text(data.location);
         $("#rdType").text(data.workStyle);
