@@ -80,13 +80,32 @@
 }
 
 @section Styles {
+    <link href="@Url.Content("~/css/map.css")" rel="stylesheet" />
     @foreach (var item in Model.AllWorkStyles)
     {
-        <link href="@Url.Content("~/css/map.css")" rel="stylesheet" />
-        <style>
-            .workstyle-@item.Name.ToLower().Replace(" ","-") {
-                background-color: rgba(@item.Color.R.ToString(), @item.Color.G.ToString(), @item.Color.B.ToString(), 0.4);
+        string color = "rgba(" + item.Color.R.ToString() + ", " + item.Color.G.ToString() + ", " + item.Color.B.ToString() + ", 0.4)";
+        string transparentColor = "rgba(" + item.Color.R.ToString() + ", " + item.Color.G.ToString() + ", " + item.Color.B.ToString() + ", 0.0)";
+        string classname = "workstyle-" + item.Name.ToLower().Replace(" ", "-");
+    <style>
+            @@keyframes @classname-breath {
+            0% {box-shadow: 0px 0px 0px 0px @color;}
+            100% {box-shadow: 0px 0px 0px 8px @transparentColor;}
             }
-        </style>
+
+            .@classname {
+                background-color: @color;
+                box-shadow: 0px 0px 0px 0px @color;
+            }
+
+            .@classname:hover {
+                box-shadow: 0px 0px 0px 2px @color;
+            }
+
+            .@(classname).active {
+                animation-name: @classname-breath;
+                animation-iteration-count:infinite;
+                animation-duration: 4s;
+            }
+    </style>
     }
 }

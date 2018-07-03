@@ -129,6 +129,8 @@ function createStation(stationViewModel) {
             root: $(".zoomViewport")
         }
         $("#followTooltip").fadeOut(200);
+        $(".stationDiv").removeClass("active");
+        $(this).addClass("active");
         //$(this).zoomTarget();
         $(this).zoomTo(settings);
         //checkDetailStatus();
