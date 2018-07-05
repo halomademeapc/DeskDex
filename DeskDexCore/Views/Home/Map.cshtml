@@ -21,8 +21,16 @@
 </div>
 <div class="card card-dark grey darken-3 white-text" id="followTooltip" style="display: none;">
     <div class="py-1 px-3">
-        <div class="card-text" id="tooltipText">
-            test
+        <div class="card-text text-center">
+
+            <div id="tooltipText">
+                name
+            </div>
+            <small>
+                <div id="tooltipPerson" style="display:none">
+                    occupant
+                </div>
+            </small>
         </div>
     </div>
 </div>
@@ -86,7 +94,7 @@
         string color = "rgba(" + item.Color.R.ToString() + ", " + item.Color.G.ToString() + ", " + item.Color.B.ToString() + ", 0.4)";
         string transparentColor = "rgba(" + item.Color.R.ToString() + ", " + item.Color.G.ToString() + ", " + item.Color.B.ToString() + ", 0.0)";
         string classname = "workstyle-" + item.Name.ToLower().Replace(" ", "-");
-    <style>
+        <style>
             @@keyframes @classname-breath {
             0% {box-shadow: 0px 0px 0px 0px @color;}
             100% {box-shadow: 0px 0px 0px 8px @transparentColor;}
@@ -106,6 +114,6 @@
                 animation-iteration-count:infinite;
                 animation-duration: 4s;
             }
-    </style>
+        </style>
     }
 }

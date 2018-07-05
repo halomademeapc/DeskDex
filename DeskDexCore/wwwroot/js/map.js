@@ -1,6 +1,7 @@
 ﻿let urlChanged = false;
 let activeStation = 0;
 let activeFloor = 0;
+let hoverDelay;
 
 $(document).ready(function () {
     //console.log("let's do this!");
@@ -49,7 +50,7 @@ $(document).on('mousemove', function (e) {
     var ftt = $("#followTooltip");
     ftt.css({
         left: (e.pageX - (ftt.width() / 2)),
-        top: (e.pageY - ftt.height() - 5)
+        bottom: $(window).height() - (e.pageY - 10)
     });
 });
 
@@ -142,11 +143,15 @@ function createStation(stationViewModel) {
 
     $(stationDiv).on("mouseover", function (event) {
         $("#tooltipText").text(stationViewModel.location);
+        hoverDelay = setTimeout(function () { updateTooltipOccupant(stationViewModel.deskID) }, 1000);
         $("#followTooltip").fadeIn(100);
     });
 
     $(stationDiv).on("mouseleave", function (event) {
-        $("#followTooltip").fadeOut(200);
+        clearTimeout(hoverDelay);
+        $("#followTooltip").fadeOut(100, function () {
+            $("#tooltipPerson").empty();
+        });
     })
 
     return stationDiv;
@@ -237,3 +242,25 @@ function getUrlParams(prop) {
 
     return (prop && prop in params) ? params[prop] : params;
 };
+
+let currentQuery;
+
+function updateTooltipOccupant(stationID) {
+    var targetDiv = $("#tooltipPerson");
+    targetDiv.hide();
+    //console.log("searching for " + term);
+    if (currentQuery) {
+        //console.log("cancelling old request");
+        currentQuery.abort();
+    }
+    currentQuery = $.getJSON('/api/Desk/' + stationID, function (data) {
+        //console.log(data);
+
+        targetDiv.empty();
+        // populate results
+        if (data.userName) {
+            targetDiv.text(data.userName);
+            targetDiv.slideDown();
+        }
+    });
+}
