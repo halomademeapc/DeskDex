@@ -146,6 +146,7 @@ function createStation(stationViewModel) {
         $("#tooltipText").text(stationViewModel.location);
         hoverDelay = setTimeout(function () { updateTooltipOccupant(stationViewModel.deskID) }, 1000);
         $("#followTooltip").stop();
+        $("#tooltipPerson").empty();
         $("#followTooltip").fadeIn(100);
     });
 
