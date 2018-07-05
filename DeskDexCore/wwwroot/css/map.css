@@ -70,3 +70,7 @@
     cursor: pointer;
     transition: all .2s ease-in-out;
 }
+
+.display-flex {
+    display: flex;
+}
