@@ -131,6 +131,7 @@ function createStation(stationViewModel) {
             easing: "ease-in-out",
             root: $(".zoomViewport")
         }
+        $("#followTooltip").stop()
         $("#followTooltip").fadeOut(200);
         //$(this).zoomTarget();
         $(this).zoomTo(settings);
@@ -144,11 +145,13 @@ function createStation(stationViewModel) {
     $(stationDiv).on("mouseover", function (event) {
         $("#tooltipText").text(stationViewModel.location);
         hoverDelay = setTimeout(function () { updateTooltipOccupant(stationViewModel.deskID) }, 1000);
+        $("#followTooltip").stop();
         $("#followTooltip").fadeIn(100);
     });
 
     $(stationDiv).on("mouseleave", function (event) {
         clearTimeout(hoverDelay);
+        $("#followTooltip").stop();
         $("#followTooltip").fadeOut(100, function () {
             $("#tooltipPerson").empty();
         });
