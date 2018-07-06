@@ -123,6 +123,7 @@ namespace DeskDexCore.Controllers
 
             if (oldCheckin != null)
             {
+                db.Stations.Where(s => s.LastCheckin == oldCheckin).ToList().ForEach(s => s.LastCheckin = null);
                 db.Checkins.Remove(oldCheckin);
                 db.SaveChangesAsync();
             }
