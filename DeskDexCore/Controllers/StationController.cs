@@ -243,8 +243,8 @@ namespace DeskDexCore.Controllers
                             scaled.Dispose();
 
                             // delete old image
-                            string delTarget = _hostingEnvironment.WebRootPath + ogImage.Replace("/", "\\");
-                            if (System.IO.File.Exists(delTarget))
+                            string delTarget = !String.IsNullOrEmpty(ogImage) ? _hostingEnvironment.WebRootPath + ogImage.Replace("/", "\\") : String.Empty;
+                            if (!String.IsNullOrEmpty(delTarget) && System.IO.File.Exists(delTarget))
                             {
                                 System.IO.File.Delete(delTarget);
                             }
@@ -306,8 +306,8 @@ namespace DeskDexCore.Controllers
             db.SaveChanges();
 
             // delete old image
-            string delTarget = _hostingEnvironment.WebRootPath + ogImage.Replace("/","\\");
-            if (System.IO.File.Exists(delTarget))
+            string delTarget = !String.IsNullOrEmpty(ogImage) ? _hostingEnvironment.WebRootPath + ogImage.Replace("/", "\\") : String.Empty;
+            if (!String.IsNullOrEmpty(delTarget) && System.IO.File.Exists(delTarget))
             {
                 System.IO.File.Delete(delTarget);
             }
