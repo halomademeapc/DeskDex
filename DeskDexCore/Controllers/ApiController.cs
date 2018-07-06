@@ -116,6 +116,21 @@ namespace DeskDexCore.Controllers
         }
 
         [HttpPost]
+        [Route("api/checkout")]
+        public ActionResult Checkout([FromBody] CheckinViewModel input)
+        {
+            var oldCheckin = db.Checkins.FirstOrDefault(c => c.Username == input.acid);
+
+            if (oldCheckin != null)
+            {
+                db.Checkins.Remove(oldCheckin);
+                db.SaveChangesAsync();
+            }
+
+            return Ok();
+        }
+
+        [HttpPost]
         [Route("api/checkin")]
         public ActionResult Post([FromBody]CheckinViewModel input)
         {
