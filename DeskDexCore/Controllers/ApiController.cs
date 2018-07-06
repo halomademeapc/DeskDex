@@ -252,7 +252,7 @@ namespace DeskDexCore.Controllers
                 }
                 else
                 {
-                    formatted = Math.Floor(duration.TotalDays).ToString();
+                    formatted = Math.Floor(duration.TotalDays).ToString() + "d";
                 }
             }
 
