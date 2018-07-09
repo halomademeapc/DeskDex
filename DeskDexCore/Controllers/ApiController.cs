@@ -25,15 +25,17 @@ namespace DeskDexCore.Controllers
         // GET: api/Desk
         [HttpGet]
         [Route("api/floor/{floor}")]
-        public FloorApiModel GetStations(int? floor)
+        public async Task<FloorApiModel> GetStations(int? floor)
         {
             /* Return an overview for use on the map based on floor
              */
 
             try
             {
-                Floor Floor = db.Floors.Find(floor);
+                var _floor = db.Floors.FirstOrDefaultAsync(f => f.ID == floor);
+                var _stations = db.Stations.Where(s => s.Floor.ID == floor).Include(s => s.Type).Include(s => s.LastCheckin).ToListAsync();
 
+                Floor Floor = await _floor;
                 FloorApiModel am = new FloorApiModel
                 {
                     Generated = DateTime.Now,
@@ -42,8 +44,7 @@ namespace DeskDexCore.Controllers
                     FloorName = Floor.Name
                 };
 
-                List<Station> Stations = db.Stations.Where(s => s.Floor.ID == floor).Include(s => s.Type).Include(s => s.LastCheckin).ToList();
-
+                List<Station> Stations = await _stations;
                 foreach (var Station in Stations)
                 {
                     am.Stations.Add(new DeskMapApiModel
@@ -54,7 +55,7 @@ namespace DeskDexCore.Controllers
                         y1 = Station.y1,
                         y2 = Station.y2,
                         WorkStyle = Station.Type?.Name,
-                        Occupied = ((Station.LastCheckin != null) && (DateTime.Now - Station.LastCheckin.LastUpdate).TotalHours < 2) ? true: false,
+                        Occupied = ((Station.LastCheckin != null) && (DateTime.Now - Station.LastCheckin.LastUpdate).TotalHours < 2) ? true : false,
                         Location = Station.Location
                     });
                 }
@@ -70,11 +71,11 @@ namespace DeskDexCore.Controllers
 
         [HttpGet]
         [Route("api/map/{floor}")]
-        public Floor getMap(int floor)
+        public async Task<Floor> getMap(int floor)
         {
             try
             {
-                return db.Floors.Find(floor);
+                return await db.Floors.FirstOrDefaultAsync(f => f.ID == floor);
             }
             catch
             {
@@ -85,12 +86,17 @@ namespace DeskDexCore.Controllers
         // GET: api/Desk/5
         [HttpGet]
         [Route("api/desk/{id}")]
-        public DeskDetailApiModel GetStation(int id)
+        public async Task<DeskDetailApiModel> GetStation(int id)
         {
             Station station;
             try
             {
-                station = db.Stations.Where(s => s.ID == id).Include(stat => stat.Type).Include(stat => stat.StationEquipments).ThenInclude(se => se.Equipment).Include(s => s.LastCheckin).First();
+                station = await db.Stations
+                    .Include(stat => stat.Type)
+                    .Include(stat => stat.StationEquipments)
+                    .ThenInclude(se => se.Equipment)
+                    .Include(s => s.LastCheckin)
+                    .FirstOrDefaultAsync(s => s.ID == id);
             }
             catch (System.InvalidOperationException)
             {
@@ -117,15 +123,16 @@ namespace DeskDexCore.Controllers
 
         [HttpPost]
         [Route("api/checkout")]
-        public ActionResult Checkout([FromBody] CheckinViewModel input)
+        public async Task<IActionResult> Checkout([FromBody] CheckinViewModel input)
         {
-            var oldCheckin = db.Checkins.FirstOrDefault(c => c.Username == input.acid);
+            var oldCheckin = await db.Checkins.FirstOrDefaultAsync(c => c.Username == input.acid);
 
             if (oldCheckin != null)
             {
-                db.Stations.Where(s => s.LastCheckin == oldCheckin).ToList().ForEach(s => s.LastCheckin = null);
+                var _clearCheckins = db.Stations.Where(s => s.LastCheckin == oldCheckin).ForEachAsync(s => s.LastCheckin = null);
                 db.Checkins.Remove(oldCheckin);
-                db.SaveChanges();
+                await _clearCheckins;
+                await db.SaveChangesAsync();
             }
 
             return Ok();
@@ -133,7 +140,7 @@ namespace DeskDexCore.Controllers
 
         [HttpPost]
         [Route("api/checkin")]
-        public ActionResult Post([FromBody]CheckinViewModel input)
+        public async Task<IActionResult> CheckIn([FromBody]CheckinViewModel input)
         {
             DateTime submitTime = DateTime.Now;
 
@@ -148,7 +155,7 @@ namespace DeskDexCore.Controllers
 
                 //// Update checkin table
                 // check existing entries with same userID
-                var oldCheckin = db.Checkins.FirstOrDefault(c => c.Username == input.acid);
+                var oldCheckin = await db.Checkins.FirstOrDefaultAsync(c => c.Username == input.acid);
 
                 // write checkin to database
                 if (oldCheckin != null)
@@ -158,11 +165,7 @@ namespace DeskDexCore.Controllers
                     oldCheckin.Display = input.display;
 
                     // clear out old station reg
-                    var prevReg = from s in db.Stations where s.LastCheckin.ID == oldCheckin.ID select s;
-                    foreach (var item in prevReg)
-                    {
-                        item.LastCheckin = null;
-                    }
+                    await db.Stations.Where(s => s.LastCheckin.ID == oldCheckin.ID).ForEachAsync(s => s.LastCheckin = null);
 
                     // switch current checkin
                     checkin = oldCheckin;
@@ -175,7 +178,7 @@ namespace DeskDexCore.Controllers
 
                 //// Update station
                 // update existing entries with same MAC
-                var station = db.Stations.FirstOrDefault(s => s.PhysicalAddress == input.address);
+                var station = await db.Stations.FirstOrDefaultAsync(s => s.PhysicalAddress == input.address);
                 if (station != null)
                 {
                     // if station exists, set its checkin to this
@@ -195,7 +198,7 @@ namespace DeskDexCore.Controllers
                 }
 
                 // Commit changes
-                db.SaveChanges();
+                await db.SaveChangesAsync();
             }
             catch (Exception e)
             {
@@ -207,41 +210,51 @@ namespace DeskDexCore.Controllers
 
         //[HttpGet("{q}")]
         [Route("api/search/{q}")]
-        public SearchApiModel Search(string q)
+        public async Task<SearchApiModel> Search(string q)
         {
             int searchLimit = 6;
 
+            var _users = FindUsersAsync(q);
+            var _stations = FindStationsAsync(q);
+
             var tmp = new SearchApiModel
             {
-                People = (FindUsers(q)).Take(searchLimit),
-                Stations = (FindStations(q)).Take(searchLimit)
+                People = (await _users).Take(searchLimit),
+                Stations = (await _stations).Take(searchLimit)
             };
             return tmp;
         }
 
-        private List<SearchLink> FindStations(string term)
+        private async Task<List<SearchLink>> FindStationsAsync(string term)
         {
             // look for stations
 
-            var st = (db.Stations.Include(s => s.Floor).Include(s => s.Type).Where(s => s.Location.Contains(term)).Where(s => s.Floor != null).ToList());
-            return st.Select(s => new SearchLink
-            {
-                Display = s.Location,
-                Link = Url.Action("Map", "Home", null) + "?floor=" + s.Floor.ID.ToString() + "&station=" + s.ID.ToString(),
-                SubText = s.Type.Name
-            }).ToList();
+            return await db.Stations
+                .Include(s => s.Floor)
+                .Include(s => s.Type)
+                .Where(s => s.Location.Contains(term) && s.Floor != null)
+                .Select(s => new SearchLink
+                {
+                    Display = s.Location,
+                    Link = Url.Action("Map", "Home", null) + "?floor=" + s.Floor.ID.ToString() + "&station=" + s.ID.ToString(),
+                    SubText = s.Type.Name
+                }).ToListAsync();
         }
 
-        private List<SearchLink> FindUsers(string term)
+        private async Task<List<SearchLink>> FindUsersAsync(string term)
         {
             // look for names on checkins
-            var st = db.Stations.Include(s => s.LastCheckin).Include(s => s.Floor).Where(s => s.LastCheckin.Display.Contains(term)).Where(s => s.Floor != null).ToList();
-            return st.Select(s => new SearchLink
-            {
-                Display = s.LastCheckin.Display,
-                Link = Url.Action("Map", "Home", null) + "?floor=" + s.Floor.ID.ToString() + "&station=" + s.ID.ToString(),
-                SubText = "Last seen " + FormatAge(s.LastCheckin.LastUpdate) + " ago"
-            }).ToList();
+            return await db.Stations
+                .Include(s => s.LastCheckin)
+                .Include(s => s.Floor)
+                .Where(s => s.LastCheckin.Display.Contains(term))
+                .Where(s => s.Floor != null)
+                .Select(s => new SearchLink
+                {
+                    Display = s.LastCheckin.Display,
+                    Link = Url.Action("Map", "Home", null) + "?floor=" + s.Floor.ID.ToString() + "&station=" + s.ID.ToString(),
+                    SubText = "Last seen " + FormatAge(s.LastCheckin.LastUpdate) + " ago"
+                }).ToListAsync();
         }
 
         private string FormatAge(DateTime target)
@@ -284,9 +297,9 @@ namespace DeskDexCore.Controllers
             base.Dispose(disposing);
         }
 
-        private bool StationExists(int id)
+        private async Task<bool> StationExists(int id)
         {
-            return db.Stations.Count(e => e.ID == id) > 0;
+            return await db.Stations.CountAsync(e => e.ID == id) > 0;
         }
     }
 }
