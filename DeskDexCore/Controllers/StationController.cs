@@ -32,29 +32,29 @@ namespace DeskDexCore.Controllers
         }
 
         // GET: Stations
-        public ActionResult Index()
+        public async Task<IActionResult> Index()
         {
             ViewBag.UserName = ((ClaimsIdentity)User.Identity).Claims;
-            return View(db.Stations.OrderByDescending(s => s.ID).Include(stat => stat.Type).Include(stat => stat.Floor).ToList());
+            return View(await db.Stations.OrderByDescending(s => s.ID).Include(stat => stat.Type).Include(stat => stat.Floor).ToListAsync());
         }
 
         // GET: Stations/Details/5
-        public ActionResult Details(int? id)
+        public async Task<IActionResult> Details(int? id)
         {
             if (id == null)
             {
-                return StatusCode(500);
+                return NotFound();
             }
-            Station station = db.Stations.Where(s => s.ID == id).Include(stat => stat.Type).Include(stat => stat.StationEquipments).ThenInclude(se => se.Equipment).Include(se => se.Floor).First();
+            Station station = await db.Stations.Include(stat => stat.Type).Include(stat => stat.StationEquipments).ThenInclude(se => se.Equipment).Include(se => se.Floor).FirstOrDefaultAsync(s => s.ID == id);
             if (station == null)
             {
-                return StatusCode(404);
+                return NotFound();
             }
             return View(station);
         }
 
         // GET: Stations/Create
-        public ActionResult Create()
+        public async Task<IActionResult> Create()
         {
             var stationViewModel = new StationViewModel
             {
@@ -62,21 +62,25 @@ namespace DeskDexCore.Controllers
 
             };
 
-            var allEquipmentList = db.Equipment.ToList();
+            var _equipment = db.Equipment.ToListAsync();
+            var _types = db.WorkStyles.ToListAsync();
+            var _floors = db.Floors.ToListAsync();
+
+            var allEquipmentList = await _equipment;
             stationViewModel.AllEquipment = allEquipmentList.Select(o => new SelectListItem
             {
                 Text = o.Name,
                 Value = o.ID.ToString()
             });
 
-            var allTypesList = db.WorkStyles.ToList();
+            var allTypesList = await _types;
             stationViewModel.AllWorkStyles = allTypesList.Select(w => new SelectListItem
             {
                 Text = w.Name,
                 Value = w.ID.ToString()
             });
 
-            var allFloorsList = db.Floors.ToList();
+            var allFloorsList = await _floors;
             stationViewModel.AllFloors = allFloorsList.OrderBy(f => f.SortName).Select(f => new SelectListItem
             {
                 Text = f.Name,
@@ -91,7 +95,7 @@ namespace DeskDexCore.Controllers
         // more details see https://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Create(StationViewModel stationViewModel)
+        public async Task<IActionResult> Create(StationViewModel stationViewModel)
         {
             if (ModelState.IsValid)
             {
@@ -110,8 +114,8 @@ namespace DeskDexCore.Controllers
                     });
                 }
 
-                station.Type = db.WorkStyles.Find(stationViewModel.selectedWorkStyle);
-                station.Floor = db.Floors.Find(stationViewModel.selectedFloor);
+                station.Type = await db.WorkStyles.FirstOrDefaultAsync(w => w.ID == stationViewModel.selectedWorkStyle);
+                station.Floor = await db.Floors.FirstOrDefaultAsync(f => f.ID == stationViewModel.selectedFloor);
 
                 // handle image
                 try
@@ -150,45 +154,45 @@ namespace DeskDexCore.Controllers
                 }
 
                 db.Stations.Add(station);
-                db.SaveChanges();
+                await db.SaveChangesAsync();
                 return RedirectToAction("Index");
             }
             return View(stationViewModel);
         }
 
         // GET: Stations/Edit/5
-        public ActionResult Edit(int? id)
+        public async Task<IActionResult> Edit(int? id)
         {
             if (id == null)
             {
-                return StatusCode(500);
+                return NotFound();
             }
             var stationViewModel = new StationViewModel
             {
-                Station = db.Stations.Where(s => s.ID == id).Include(s => s.StationEquipments).Include(s => s.Floor).First()
-
+                Station = await db.Stations.Include(s => s.StationEquipments).Include(s => s.Floor).FirstOrDefaultAsync(s => s.ID == id)
             };
             if (stationViewModel.Station == null)
             {
-                return StatusCode(404);
+                return NotFound();
             }
 
-            var allEquipmentList = db.Equipment.ToList();
-            stationViewModel.AllEquipment = allEquipmentList.Select(o => new SelectListItem
+            var allEquipmentList = db.Equipment.ToListAsync();
+            var allTypesList = db.WorkStyles.ToListAsync();
+            var allFloorsList = db.Floors.ToListAsync();
+
+            stationViewModel.AllEquipment = (await allEquipmentList).Select(o => new SelectListItem
             {
                 Text = o.Name,
                 Value = o.ID.ToString()
             });
 
-            var allTypesList = db.WorkStyles.ToList();
-            stationViewModel.AllWorkStyles = allTypesList.Select(w => new SelectListItem
+            stationViewModel.AllWorkStyles = (await allTypesList).Select(w => new SelectListItem
             {
                 Text = w.Name,
                 Value = w.ID.ToString()
             });
 
-            var allFloorsList = db.Floors.ToList();
-            stationViewModel.AllFloors = allFloorsList.OrderBy(f => f.SortName).Select(f => new SelectListItem
+            stationViewModel.AllFloors = (await allFloorsList).OrderBy(f => f.SortName).Select(f => new SelectListItem
             {
                 Text = f.Name,
                 Value = f.ID.ToString()
@@ -202,19 +206,18 @@ namespace DeskDexCore.Controllers
         // more details see https://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Edit(StationViewModel stationViewModel)
+        public async Task<IActionResult> Edit(StationViewModel stationViewModel)
         {
             if (ModelState.IsValid)
             {
-                foreach (var old in db.StationEquipments.Where(se => se.StationId == stationViewModel.Station.ID))
-                {
-                    db.StationEquipments.Remove(old);
-                }
-                db.SaveChanges();
+                await db.StationEquipments
+                    .Where(se => se.StationId == stationViewModel.Station.ID)
+                    .ForEachAsync(old => db.StationEquipments.Remove(old));
+                await db.SaveChangesAsync();
 
                 var station = stationViewModel.Station;
 
-                var oldEntry = db.Stations.Where(s => s.ID == stationViewModel.Station.ID).Include(s => s.StationEquipments).First();
+                var oldEntry = await db.Stations.Include(s => s.StationEquipments).FirstOrDefaultAsync(s => s.ID == stationViewModel.Station.ID);
 
                 var ogImage = oldEntry.FilePath;
 
@@ -271,26 +274,29 @@ namespace DeskDexCore.Controllers
                     });
                 }
 
-                oldEntry.Type = db.WorkStyles.Find(stationViewModel.selectedWorkStyle);
-                oldEntry.Floor = db.Floors.Find(stationViewModel.selectedFloor);
+                var _type = db.WorkStyles.FirstOrDefaultAsync(t => t.ID == stationViewModel.selectedWorkStyle);
+                var _floor = db.Floors.FirstOrDefaultAsync(f => f.ID == stationViewModel.selectedFloor);
 
-                db.SaveChanges();
+                oldEntry.Type = await _type;
+                oldEntry.Floor = await _floor;
+
+                await db.SaveChangesAsync();
                 return RedirectToAction("Index");
             }
             return View(stationViewModel);
         }
 
         // GET: Stations/Delete/5
-        public ActionResult Delete(int? id)
+        public async Task<IActionResult> Delete(int? id)
         {
             if (id == null)
             {
-                return StatusCode(500);
+                return NotFound();
             }
-            Station station = db.Stations.Find(id);
+            Station station = await db.Stations.FirstOrDefaultAsync(s => s.ID == id);
             if (station == null)
             {
-                return StatusCode(404);
+                return NotFound();
             }
             return View(station);
         }
@@ -298,12 +304,12 @@ namespace DeskDexCore.Controllers
         // POST: Stations/Delete/5
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
-        public ActionResult DeleteConfirmed(int id)
+        public async Task<IActionResult> DeleteConfirmed(int id)
         {
-            Station station = db.Stations.Find(id);
+            Station station = await db.Stations.FirstOrDefaultAsync(s => s.ID == id);
             string ogImage = station.FilePath;
             db.Stations.Remove(station);
-            db.SaveChanges();
+            await db.SaveChangesAsync();
 
             // delete old image
             string delTarget = !String.IsNullOrEmpty(ogImage) ? _hostingEnvironment.WebRootPath + ogImage.Replace("/", "\\") : String.Empty;
