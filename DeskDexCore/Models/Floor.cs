@@ -10,6 +10,7 @@ namespace DeskDexCore.Models
     public class Floor
     {
         [Key, DatabaseGenerated(DatabaseGeneratedOption.Identity)]
+        [Column("FloorID")]
         public int ID { get; set; }
 
         [Required]

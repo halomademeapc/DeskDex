@@ -1,22 +1,30 @@
 ﻿let urlChanged = false;
+let activeStation = 0;
+let activeFloor = 0;
+let hoverDelay;
+
 $(document).ready(function () {
     //console.log("let's do this!");
     var fs = $("#floorSelect");
 
     fs.on("change", function () {
         var targetFloor = $("#floorSelect").val();
+        resetZoom();
         loadMap(targetFloor);
     });
 
     $("#mapImage").on("dragstart", function (event) {
+        //console.log("prevent drag");
         event.preventDefault();
     })
 
     setOverlay();
     $(window).resize(setOverlay);
 
-    $(".zoomViewport").on("click", checkDetailStatus);
-    $("#overlays").on("click", checkDetailStatus);
+    $(".zoomViewport").on("click", function () {
+        hideDetails();
+        resetZoom();
+    });
 
     var defaultFloor = fs.data("default")
     // check querystring
@@ -29,13 +37,20 @@ $(document).ready(function () {
         fs.val(defaultFloor);
     }
     loadMap(fs.val());
+
+    $(".legendtoggle").on("click", function () {
+        $(".workstyle-" + $(this).data("target")).fadeToggle();
+    });
+
+    // auto-refresh every 60 seconds
+    window.setInterval(refreshData, 60000);
 });
 
 $(document).on('mousemove', function (e) {
     var ftt = $("#followTooltip");
     ftt.css({
         left: (e.pageX - (ftt.width() / 2)),
-        top: (e.pageY - ftt.height() - 5)
+        bottom: $(window).height() - (e.pageY - 10)
     });
 });
 
@@ -44,6 +59,7 @@ function setOverlay() {
 }
 
 function loadMap(floor) {
+    activeFloor = parseInt(floor);
     // set cookie to remember current floor
     document.cookie = "mapFloor=" + floor + ";";
     if (urlChanged) {
@@ -53,9 +69,6 @@ function loadMap(floor) {
     }
 
     var olDiv = $("#overlays");
-
-    //clear existing elements
-    olDiv.empty();
 
     // call API to get desk locations on this floor
     $.getJSON('/api/floor/' + floor, function (data) {
@@ -71,6 +84,9 @@ function loadMap(floor) {
             //console.log("targeting " + targetStation);
         }
 
+        //clear existing elements
+        olDiv.empty();
+
         // load stations
         for (var i = 0; i < data.stations.length; i++) {
             var thisStation = createStation(data.stations[i]);
@@ -82,9 +98,10 @@ function loadMap(floor) {
             }
         }
 
+        setActiveStation();
+
         //$(".queriedStation").zoomTo();
         setTimeout(function () {
-            $(".queriedStation").trigger("click");
             $(".queriedStation").trigger("click");
         }, 600);
     });
@@ -94,62 +111,98 @@ function createStation(stationViewModel) {
     var stationDiv = $(document.createElement('div'));
     var size = [(stationViewModel.x2 - stationViewModel.x1) * 100, (stationViewModel.y2 - stationViewModel.y1) * 100];
     stationDiv.addClass("stationDiv");
-    stationDiv.addClass(("workstyle-" + stationViewModel.workStyle).toLowerCase().replace(" ", "-"));
+    stationDiv.addClass(("workstyle-" + stationViewModel.workStyle).toLowerCase().replace(/ /g, "-"));
     stationDiv.css("width", size[0] + "%");
     stationDiv.css("height", size[1] + "%");
     stationDiv.css("left", (stationViewModel.x1 * 100) + "%");
     stationDiv.css("top", (stationViewModel.y1 * 100) + "%");
-    stationDiv.data("targetsize", .5);
+    //stationDiv.data("targetsize", .05);
+    //stationDiv.data("duration", 2000);
     stationDiv.data("stationID", stationViewModel.deskID);
     if (stationViewModel.occupied == true) {
         stationDiv.addClass("occupied");
     }
 
     $(stationDiv).on("click", function (event) {
-        //console.log("station clicked");
+        //console.log("station " + $(this).data("stationID") + " clicked");
+        var settings = {
+            targetsize: .05,
+            duration: 2000,
+            easing: "ease-in-out",
+            root: $(".zoomViewport")
+        }
+        $("#followTooltip").stop()
         $("#followTooltip").fadeOut(200);
-        $(this).zoomTarget();
-        checkDetailStatus();
+        //$(this).zoomTarget();
+        $(this).zoomTo(settings);
+        //checkDetailStatus();
+        showDetails($(this).data("stationID"));
+        activeStation = parseInt($(this).data("stationID"));
+        setActiveStation();
+        event.stopPropagation();
     });
 
     $(stationDiv).on("mouseover", function (event) {
         $("#tooltipText").text(stationViewModel.location);
+        hoverDelay = setTimeout(function () { updateTooltipOccupant(stationViewModel.deskID) }, 1000);
+        $("#followTooltip").stop();
+        $("#tooltipPerson").empty();
         $("#followTooltip").fadeIn(100);
     });
 
     $(stationDiv).on("mouseleave", function (event) {
-        $("#followTooltip").fadeOut(200);
+        clearTimeout(hoverDelay);
+        $("#followTooltip").stop();
+        $("#followTooltip").fadeOut(100, function () {
+            $("#tooltipPerson").empty();
+        });
     })
 
     return stationDiv;
+};
+
+function refreshData() {
+    if (activeFloor > 0) {
+        loadMap(activeFloor);
+        if (activeStation > 0) {
+            updateDetails(activeStation);
+        }
+    }
 }
 
-function checkDetailStatus() {
-    setTimeout(function () {
-        //console.log("cds called");
-        var tar = $(".stationDiv.selectedZoomTarget");
-        if (tar.length > 0) {
-            try {
-                if (tar.data("stationID") > 0) {
-                    updateDetails(tar.data("stationID"));
-                    $("#roomDetails").slideDown();
-                    $("#mapLegend").slideUp();
-                }
-            } catch (e) {
-                //console.log(e);
-                $("#roomDetails").slideUp();
-                $("#mapLegend").slideDown();
-            }
-        } else {
-            $("#roomDetails").slideUp();
-            $("#mapLegend").slideDown();
-        }
-    }, 700);
+function showDetails(stationID) {
+    updateDetails(stationID);
+    $("#roomDetails").slideDown();
+    $("#mapLegend").slideUp();
+}
+
+function hideDetails() {
+    $("#roomDetails").slideUp();
+    $("#mapLegend").slideDown();
+}
+
+function resetZoom() {
+    activeStation = 0;
+    $(".stationDiv").removeClass("active");
+    var settings = {
+        duration: 600,
+        easing: "ease-in-out",
+        root: $(".zoomViewport")
+    }
+    $(".zoomViewport").zoomTo(settings);
+}
+
+function setActiveStation() {
+    $(".stationDiv").removeClass("active");
+    $(".stationDiv").filter(function () {
+        return $(this).data("stationID") == activeStation
+    }).addClass("active");
 }
 
 function updateDetails(stationID) {
     $.getJSON('/api/Desk/' + stationID, function (data) {
         //console.log("loaded details for station " + data.deskID);
+        setActiveStation();
 
         $("#rdLocation").text(data.location);
         $("#rdType").text(data.workStyle);
@@ -192,4 +245,26 @@ function getUrlParams(prop) {
     });
 
     return (prop && prop in params) ? params[prop] : params;
+};
+
+let currentQuery;
+
+function updateTooltipOccupant(stationID) {
+    var targetDiv = $("#tooltipPerson");
+    targetDiv.hide();
+    //console.log("searching for " + term);
+    if (currentQuery) {
+        //console.log("cancelling old request");
+        currentQuery.abort();
+    }
+    currentQuery = $.getJSON('/api/Desk/' + stationID, function (data) {
+        //console.log(data);
+
+        targetDiv.empty();
+        // populate results
+        if (data.userName) {
+            targetDiv.text(data.userName);
+            targetDiv.slideDown();
+        }
+    });
 }

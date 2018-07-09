@@ -11,6 +11,7 @@ namespace DeskDexCore.Models
     public class WorkStyle
     {
         [Key, DatabaseGenerated(DatabaseGeneratedOption.Identity)]
+        [Column("WorkStyleID")]
         public int ID { get; set; }
 
         [Required]

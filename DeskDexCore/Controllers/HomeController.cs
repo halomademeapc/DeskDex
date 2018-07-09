@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using DeskDexCore.Models;
 using Microsoft.AspNetCore.Mvc.Rendering;
+using Microsoft.EntityFrameworkCore;
 
 namespace DeskDexCore.Controllers
 {
@@ -22,26 +23,30 @@ namespace DeskDexCore.Controllers
         }
 
         [HttpGet("")]
-        public IActionResult Index()
+        public async Task<IActionResult> Index()
         {
             var stats = new HomeViewModel
             {
-                UserCount = db.Checkins.Where(c => (DateTime.Now - c.LastUpdate).TotalHours < 2).ToList().Count(),
-                StationCount = db.Stations.Where(s => s.Location != "Unknown").ToList().Count()
+                UserCount = await db.Checkins.Where(c => (DateTime.Now - c.LastUpdate).TotalHours < 2).CountAsync(),
+                StationCount = await db.Stations.Where(s => s.Location != "Unknown").CountAsync()
             };
-            stats.OpenRatio = stats.StationCount > 0 ? ((stats.UserCount * 100) / (stats.StationCount)) : 100;
             return View(stats);
         }
 
         [HttpGet("Map")]
-        public IActionResult Map()
+        public async Task<IActionResult> Map()
         {
+            // start db calls
+            var workStyles = db.WorkStyles.ToListAsync();
+            var allFloors = db.Floors.ToListAsync();
+
+            // assign results
             var vm = new LegendViewModel
             {
-                AllWorkStyles = db.WorkStyles.ToList()
+                AllWorkStyles = await workStyles
             };
 
-            var AllFloorsList = db.Floors.ToList();
+            var AllFloorsList = await allFloors;
             vm.AllFloors = AllFloorsList.OrderBy(f => f.SortName).Select(f => new SelectListItem
             {
                 Text = f.Name,
@@ -54,7 +59,7 @@ namespace DeskDexCore.Controllers
             }
             else
             {
-                ViewBag.DefaultFloor = AllFloorsList[0].ID.ToString();
+                ViewBag.DefaultFloor = AllFloorsList.FirstOrDefault().ID.ToString();
             }
 
             return View(vm);

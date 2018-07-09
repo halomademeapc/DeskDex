@@ -21,22 +21,22 @@ namespace DeskDexCore.Controllers
         }
 
         // GET: WorkStyles
-        public ActionResult Index()
+        public async Task<IActionResult> Index()
         {
-            return View(db.WorkStyles.ToList());
+            return View(await db.WorkStyles.ToListAsync());
         }
 
         // GET: WorkStyles/Details/5
-        public ActionResult Details(int? id)
+        public async Task<IActionResult> Details(int? id)
         {
             if (id == null)
             {
-                return StatusCode(500);
+                return NotFound();
             }
-            WorkStyle workStyle = db.WorkStyles.Find(id);
+            WorkStyle workStyle = await db.WorkStyles.FirstOrDefaultAsync(w => w.ID == id);
             if (workStyle == null)
             {
-                return StatusCode(404);
+                return NotFound();
             }
             return View(workStyle);
         }
@@ -52,12 +52,12 @@ namespace DeskDexCore.Controllers
         // more details see https://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Create(WorkStyle workStyle)
+        public async Task<IActionResult> Create(WorkStyle workStyle)
         {
             if (ModelState.IsValid)
             {
                 db.WorkStyles.Add(workStyle);
-                db.SaveChanges();
+                await db.SaveChangesAsync();
                 return RedirectToAction("Index");
             }
 
@@ -65,16 +65,16 @@ namespace DeskDexCore.Controllers
         }
 
         // GET: WorkStyles/Edit/5
-        public ActionResult Edit(int? id)
+        public async Task<IActionResult> Edit(int? id)
         {
             if (id == null)
             {
-                return StatusCode(500);
+                return NotFound();
             }
-            WorkStyle workStyle = db.WorkStyles.Find(id);
+            WorkStyle workStyle = await db.WorkStyles.FirstOrDefaultAsync(w => w.ID == id);
             if (workStyle == null)
             {
-                return StatusCode(404);
+                return NotFound();
             }
             return View(workStyle);
         }
@@ -84,28 +84,28 @@ namespace DeskDexCore.Controllers
         // more details see https://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Edit(WorkStyle workStyle)
+        public async Task<IActionResult> Edit(WorkStyle workStyle)
         {
             if (ModelState.IsValid)
             {
                 db.Entry(workStyle).State = EntityState.Modified;
-                db.SaveChanges();
+                await db.SaveChangesAsync();
                 return RedirectToAction("Index");
             }
             return View(workStyle);
         }
 
         // GET: WorkStyles/Delete/5
-        public ActionResult Delete(int? id)
+        public async Task<IActionResult> Delete(int? id)
         {
             if (id == null)
             {
-                return StatusCode(500);
+                return NotFound();
             }
-            WorkStyle workStyle = db.WorkStyles.Find(id);
+            WorkStyle workStyle = await db.WorkStyles.FirstOrDefaultAsync(w => w.ID == id);
             if (workStyle == null)
             {
-                return StatusCode(404);
+                return NotFound();
             }
             return View(workStyle);
         }
@@ -113,11 +113,11 @@ namespace DeskDexCore.Controllers
         // POST: WorkStyles/Delete/5
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
-        public ActionResult DeleteConfirmed(int id)
+        public async Task<IActionResult> DeleteConfirmed(int id)
         {
-            WorkStyle workStyle = db.WorkStyles.Find(id);
+            WorkStyle workStyle = await db.WorkStyles.FirstOrDefaultAsync(w => w.ID == id);
             db.WorkStyles.Remove(workStyle);
-            db.SaveChanges();
+            await db.SaveChangesAsync();
             return RedirectToAction("Index");
         }
 

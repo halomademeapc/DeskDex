@@ -18,11 +18,19 @@
             </div>
         </div>
     </div>
-    <div class="card card-dark grey darken-3 white-text" id="followTooltip" style="display: none;">
-        <div class="py-1 px-3">
-            <div class="card-text" id="tooltipText">
-                test
+</div>
+<div class="card card-dark grey darken-3 white-text" id="followTooltip" style="display: none;">
+    <div class="py-1 px-3">
+        <div class="card-text text-center">
+
+            <div id="tooltipText">
+                name
             </div>
+            <small>
+                <div id="tooltipPerson" style="display:none">
+                    occupant
+                </div>
+            </small>
         </div>
     </div>
 </div>
@@ -31,11 +39,11 @@
 <div class="fixed-bottom click-none">
     <!-- bottom controls -->
     <div class="float-right">
-        <div class="text-right mb-1 mr-3" id="mapLegend">
+        <div class="text-right mb-1 mr-3 display-flex align-items-end flex-column" id="mapLegend">
             <!-- legend -->
             @foreach (var item in Model.AllWorkStyles)
             {
-                <div>
+                <div class="legendtoggle" data-target="@item.Name.ToLower().Replace(" ","-")">
                     <small>@item.Name</small>
                     <span class="workstyle-@item.Name.ToLower().Replace(" ","-") px-2 my-1"></span>
                 </div>
@@ -52,7 +60,7 @@
     </div>
     <div class="clearfix click-none"></div>
     <!-- popup info card -->
-    <div class="card click-default" id="roomDetails" style="display:none">
+    <div class="card click-default translucent" id="roomDetails" style="display:none">
         <div class="container">
             <div class="row">
                 <div class="card-body col-md-9">
@@ -80,12 +88,31 @@
 }
 
 @section Styles {
+    <link href="@Url.Content("~/css/map.css")" rel="stylesheet" />
     @foreach (var item in Model.AllWorkStyles)
     {
-        <link href="@Url.Content("~/css/map.css")" rel="stylesheet" />
+        string color = "rgba(" + item.Color.R.ToString() + ", " + item.Color.G.ToString() + ", " + item.Color.B.ToString() + ", 0.4)";
+        string transparentColor = "rgba(" + item.Color.R.ToString() + ", " + item.Color.G.ToString() + ", " + item.Color.B.ToString() + ", 0.0)";
+        string classname = "workstyle-" + item.Name.ToLower().Replace(" ", "-");
         <style>
-            .workstyle-@item.Name.ToLower().Replace(" ","-") {
-                background-color: rgba(@item.Color.R.ToString(), @item.Color.G.ToString(), @item.Color.B.ToString(), 0.4);
+            @@keyframes @classname-breath {
+            0% {box-shadow: 0px 0px 0px 0px @color;}
+            100% {box-shadow: 0px 0px 0px 8px @transparentColor;}
+            }
+
+            .@classname {
+                background-color: @color;
+                box-shadow: 0px 0px 0px 0px @color;
+            }
+
+            .@classname:hover {
+                box-shadow: 0px 0px 0px 2px @color;
+            }
+
+            .@(classname).active {
+                animation-name: @classname-breath;
+                animation-iteration-count:infinite;
+                animation-duration: 4s;
             }
         </style>
     }

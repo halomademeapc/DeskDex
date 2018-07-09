@@ -7,14 +7,22 @@ namespace DeskDexCore.Models
 {
     public class HomeViewModel
     {
-        public string MainImage {get
+        public string MainImage
+        {
+            get
             {
                 return _homeImages[new Random().Next(_homeImages.Count)];
             }
         }
         public int UserCount { get; set; }
         public int StationCount { get; set; }
-        public int OpenRatio { get; set; }
+        public int OpenRatio
+        {
+            get
+            {
+                return StationCount > 0 ? ((UserCount * 100) / (StationCount)) : 100;
+            }
+        }
 
         private static List<string> _homeImages = new List<string>
         {

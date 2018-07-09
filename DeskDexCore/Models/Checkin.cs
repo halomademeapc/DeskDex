@@ -10,6 +10,7 @@ namespace DeskDexCore.Models
     public class Checkin
     {
         [Key, DatabaseGenerated(DatabaseGeneratedOption.Identity)]
+        [Column("CheckinID")]
         public int ID { get; set; }
 
         [Required]
