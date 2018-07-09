@@ -22,28 +22,28 @@ namespace DeskDexCore.Controllers
         }
 
         // GET: Equipments
-        public ActionResult Index()
+        public async Task<IActionResult> Index()
         {
-            return View(db.Equipment.ToList());
+            return View(await db.Equipment.ToListAsync());
         }
 
         // GET: Equipments/Details/5
-        public ActionResult Details(int? id)
+        public async Task<IActionResult> Details(int? id)
         {
             if (id == null)
             {
-                return StatusCode(500);
+                return NotFound();
             }
-            Equipment equipment = db.Equipment.Find(id);
+            Equipment equipment = await db.Equipment.SingleOrDefaultAsync(e => e.ID == id);
             if (equipment == null)
             {
-                return StatusCode(404);
+                return NotFound();
             }
             return View(equipment);
         }
 
         // GET: Equipments/Create
-        public ActionResult Create()
+        public IActionResult Create()
         {
             return View();
         }
@@ -53,12 +53,12 @@ namespace DeskDexCore.Controllers
         // more details see https://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Create(Equipment equipment)
+        public async Task<IActionResult> Create(Equipment equipment)
         {
             if (ModelState.IsValid)
             {
                 db.Equipment.Add(equipment);
-                db.SaveChanges();
+                await db.SaveChangesAsync();
                 return RedirectToAction("Index");
             }
 
@@ -66,16 +66,16 @@ namespace DeskDexCore.Controllers
         }
 
         // GET: Equipments/Edit/5
-        public ActionResult Edit(int? id)
+        public async Task<IActionResult> Edit(int? id)
         {
             if (id == null)
             {
-                return StatusCode(500);
+                return NotFound();
             }
-            Equipment equipment = db.Equipment.Find(id);
+            Equipment equipment = await db.Equipment.FirstOrDefaultAsync(e => e.ID == id);
             if (equipment == null)
             {
-                return StatusCode(404);
+                return NotFound();
             }
             return View(equipment);
         }
@@ -85,28 +85,28 @@ namespace DeskDexCore.Controllers
         // more details see https://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Edit(Equipment equipment)
+        public async Task<IActionResult> Edit(Equipment equipment)
         {
             if (ModelState.IsValid)
             {
                 db.Entry(equipment).State = EntityState.Modified;
-                db.SaveChanges();
+                await db.SaveChangesAsync();
                 return RedirectToAction("Index");
             }
             return View(equipment);
         }
 
         // GET: Equipments/Delete/5
-        public ActionResult Delete(int? id)
+        public async Task<IActionResult> Delete(int? id)
         {
             if (id == null)
             {
-                return StatusCode(500);
+                return NotFound();
             }
-            Equipment equipment = db.Equipment.Find(id);
+            Equipment equipment = await db.Equipment.FirstOrDefaultAsync(e => e.ID == id);
             if (equipment == null)
             {
-                return StatusCode(404);
+                return NotFound();
             }
             return View(equipment);
         }
@@ -114,11 +114,11 @@ namespace DeskDexCore.Controllers
         // POST: Equipments/Delete/5
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
-        public ActionResult DeleteConfirmed(int id)
+        public async Task<IActionResult> DeleteConfirmed(int id)
         {
-            Equipment equipment = db.Equipment.Find(id);
+            Equipment equipment = await db.Equipment.FirstOrDefaultAsync(e => e.ID == id);
             db.Equipment.Remove(equipment);
-            db.SaveChanges();
+            await db.SaveChangesAsync();
             return RedirectToAction("Index");
         }
 
